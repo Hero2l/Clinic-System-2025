@@ -4,21 +4,21 @@ import Footer from "@/components/layout/Footer";
 import BackToTop from "@/components/layout/BackToTop";
 
 export const metadata = {
-  title: "MediCare Clinic - Online Appointment Booking",
-  description: "Experience seamless healthcare with MediCare Clinic. Book appointments with trusted doctors online, manage your healthcare needs, and receive quality medical care.",
+  title: "Klinik Mekar - Online Appointment Booking",
+  description: "Experience seamless healthcare with Klinik Mekar. Book appointments with trusted doctors online, manage your healthcare needs, and receive quality medical care.",
   keywords: "clinic, doctor appointment, healthcare, medical booking, online appointment",
-  authors: [{ name: "MediCare Clinic" }],
-  creator: "MediCare Clinic",
-  publisher: "MediCare Clinic",
+  authors: [{ name: "Klinik Mekar" }],
+  creator: "Klinik Mekar",
+  publisher: "Klinik Mekar",
   openGraph: {
-    title: "MediCare Clinic - Online Appointment Booking",
+    title: "Klinik Mekar - Online Appointment Booking",
     description: "Book appointments with trusted doctors online. Quality healthcare made convenient.",
     type: "website",
     locale: "en_US",
   },
   twitter: {
     card: "summary_large_image",
-    title: "MediCare Clinic - Online Appointment Booking",
+    title: "Klinik Mekar - Online Appointment Booking",
     description: "Book appointments with trusted doctors online. Quality healthcare made convenient.",
   },
   robots: {

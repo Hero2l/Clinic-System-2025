@@ -14,7 +14,7 @@ export default function Header() {
             <div className="w-8 h-8 bg-teal-600 rounded-lg flex items-center justify-center">
               <span className="text-white font-bold text-lg">+</span>
             </div>
-            <span className="text-xl font-semibold text-gray-800">MediCare Clinic</span>
+            <span className="text-xl font-semibold text-gray-800">Klinik Mekar</span>
           </Link>
 
           {/* Desktop Navigation */}
