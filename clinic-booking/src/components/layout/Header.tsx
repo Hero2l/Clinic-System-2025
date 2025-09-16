@@ -108,13 +108,15 @@ export default function Header() {
               >
                 Contact
               </Link>
-              <Link
-                href="/book-appointment"
-                className="inline-flex items-center justify-center mt-4 px-6 py-3 bg-teal-600 hover:bg-teal-700 text-white font-medium rounded-lg transition-colors shadow-md"
-                onClick={() => setIsOpen(false)}
-              >
-                Book Appointment
-              </Link>
+              {pathname !== '/book-appointment' && (
+                <Link
+                  href="/book-appointment"
+                  className="inline-flex items-center justify-center mt-4 px-6 py-3 bg-teal-600 hover:bg-teal-700 text-white font-medium rounded-lg transition-colors shadow-md"
+                  onClick={() => setIsOpen(false)}
+                >
+                  Book Appointment
+                </Link>
+              )}
             </nav>
           </div>
         )}
