@@ -164,51 +164,6 @@ export default function AboutPage() {
                     </div>
                 </div>
             </section>
-
-            {/* Meet Our Team */}
-            <section className="py-16 bg-white">
-                <div className="container mx-auto px-4 lg:px-6">
-                    <div className="text-center mb-12">
-                        <h2 className="text-3xl font-bold text-gray-800 mb-4">
-                            Meet Our Team
-                        </h2>
-                        <p className="text-gray-600 max-w-2xl mx-auto">
-                            Our dedicated doctors and staff are here to provide you with the
-                            best care possible.
-                        </p>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        {[
-                            {
-                                name: "Dr. Aisyah Ahmad",
-                                role: "General Practitioner",
-                                img: "/images/team/doctor1.jpg",
-                            },
-                            {
-                                name: "Dr. Farhan Lim",
-                                role: "Pediatrician",
-                                img: "/images/team/doctor2.jpg",
-                            },
-                        ].map((member, index) => (
-                            <div
-                                key={index}
-                                className="bg-gray-50 p-6 rounded-xl shadow-md hover:shadow-lg transition-shadow text-center"
-                            >
-                                <img
-                                    src={member.img}
-                                    alt={member.name}
-                                    className="w-32 h-32 rounded-full mx-auto mb-4 object-cover border-4 border-teal-100"
-                                />
-                                <h3 className="text-xl font-semibold text-gray-800">
-                                    {member.name}
-                                </h3>
-                                <p className="text-teal-600 font-medium">{member.role}</p>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            </section>
         </div>
     );
 }
