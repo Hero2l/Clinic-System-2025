@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
-  const isHome = pathname === '/';
+  const isBookingForm = pathname === '/';
 
   return (
     <header className="bg-white shadow-lg border-b border-gray-100">
@@ -41,14 +41,15 @@ export default function Header() {
 
           {/* Book Appointment Button & Mobile Menu */}
           <div className="flex items-center space-x-4">
-            
-            <Link 
-              href="/book-appointment" 
-              className="hidden sm:inline-flex items-center px-6 py-2.5 bg-teal-600 hover:bg-teal-700 text-white font-medium rounded-lg transition-colors shadow-md hover:shadow-lg"
-            >
-              Book Appointment
-            </Link>
-            
+            {pathname !== '/book-appointment' && (
+              <Link
+                href="/book-appointment"
+                className="hidden sm:inline-flex items-center px-6 py-2.5 bg-teal-600 hover:bg-teal-700 text-white font-medium rounded-lg transition-colors shadow-md hover:shadow-lg"
+              >
+                Book Appointment
+              </Link>
+            )}
+
             {/* Mobile Menu Button */}
             <button
               className="lg:hidden flex items-center justify-center w-10 h-10 text-gray-700 hover:text-teal-600 transition-colors"
@@ -72,43 +73,43 @@ export default function Header() {
         {isOpen && (
           <div className="lg:hidden border-t border-gray-100 py-4">
             <nav className="flex flex-col space-y-3">
-              <Link 
-                href="/" 
+              <Link
+                href="/"
                 className="text-gray-700 hover:text-teal-600 font-medium transition-colors py-2"
                 onClick={() => setIsOpen(false)}
               >
                 Home
               </Link>
-              <Link 
-                href="/doctors" 
+              <Link
+                href="/doctors"
                 className="text-gray-700 hover:text-teal-600 font-medium transition-colors py-2"
                 onClick={() => setIsOpen(false)}
               >
                 Doctors
               </Link>
-              <Link 
-                href="/services" 
+              <Link
+                href="/services"
                 className="text-gray-700 hover:text-teal-600 font-medium transition-colors py-2"
                 onClick={() => setIsOpen(false)}
               >
                 Services
               </Link>
-              <Link 
-                href="/about" 
+              <Link
+                href="/about"
                 className="text-gray-700 hover:text-teal-600 font-medium transition-colors py-2"
                 onClick={() => setIsOpen(false)}
               >
                 About
               </Link>
-              <Link 
-                href="/contact" 
+              <Link
+                href="/contact"
                 className="text-gray-700 hover:text-teal-600 font-medium transition-colors py-2"
                 onClick={() => setIsOpen(false)}
               >
                 Contact
               </Link>
-              <Link 
-                href="/book-appointment" 
+              <Link
+                href="/book-appointment"
                 className="inline-flex items-center justify-center mt-4 px-6 py-3 bg-teal-600 hover:bg-teal-700 text-white font-medium rounded-lg transition-colors shadow-md"
                 onClick={() => setIsOpen(false)}
               >
