@@ -23,19 +23,31 @@ const bookedSlots: { [key: string]: string[] } = {
 };
 
 // Helper component for the steps indicator
+
 const StepsIndicator = ({ currentStep }: { currentStep: number }) => {
   const steps = ["Appointment Details", "Patient's Info", "Confirmation", "Completed"];
 
   return (
-    // Use padding to prevent content from touching screen edges on mobile
-    <div className="flex items-start justify-center mb-12 w-full px-4" role="progressbar" aria-valuenow={currentStep} aria-valuemin={1} aria-valuemax={4}>
+    <div
+      className="flex items-start justify-between mb-12 w-full px-4 sm:max-w-3xl sm:mx-auto"
+      role="progressbar"
+      aria-valuenow={currentStep}
+      aria-valuemin={1}
+      aria-valuemax={4}
+    >
       {steps.map((step, index) => {
         const stepNumber = index + 1;
         const isCompleted = stepNumber < currentStep;
         const isActive = stepNumber === currentStep;
 
         return (
-          <div key={stepNumber} className="flex items-start flex-1">
+          <div
+            key={stepNumber}
+            // Use flex-1 on all but the last item to distribute space
+            className={clsx("flex items-center justify-start", {
+              "flex-1": stepNumber < steps.length,
+            })}
+          >
             {/* Step circle and label container */}
             <div className="flex flex-col items-center">
               <div
@@ -53,9 +65,8 @@ const StepsIndicator = ({ currentStep }: { currentStep: number }) => {
               </div>
               <p
                 className={clsx(
-                  // CHANGE: Added w-20 to force text wrapping on small screens
-                  // CHANGE: Made font size responsive (smaller on mobile)
-                  "mt-2 text-center text-xs sm:text-sm font-medium transition-all duration-300 w-20",
+                  // REMOVED fixed widths (w-16, sm:w-20)
+                  "mt-2 text-center text-xs sm:text-sm font-medium transition-all duration-300",
                   {
                     "text-teal-600": isActive || isCompleted,
                     "text-gray-400": !isActive && !isCompleted,
@@ -68,8 +79,13 @@ const StepsIndicator = ({ currentStep }: { currentStep: number }) => {
 
             {/* Connector line */}
             {stepNumber < steps.length && (
-              // CHANGE: Reduced horizontal margin on mobile (mx-2) and increased it on larger screens (sm:mx-4)
-              <div className={`flex-auto border-t-2 mt-5 mx-2 sm:mx-4 transition-all duration-300 ${isCompleted ? "border-teal-500" : "border-gray-300"}`} />
+              <div
+                className={clsx(
+                  // ADDED flex-grow to fill space and REMOVED inline style
+                  "flex-grow border-t-2 mt-5 mx-2 sm:mx-4 transition-all duration-300",
+                  isCompleted ? "border-teal-500" : "border-gray-300"
+                )}
+              />
             )}
           </div>
         );
