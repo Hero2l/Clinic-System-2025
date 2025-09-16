@@ -1,9 +1,12 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
+  const pathname = usePathname();
+  const isHome = pathname === '/';
 
   return (
     <header className="bg-white shadow-lg border-b border-gray-100">
@@ -38,6 +41,7 @@ export default function Header() {
 
           {/* Book Appointment Button & Mobile Menu */}
           <div className="flex items-center space-x-4">
+            
             <Link 
               href="/book-appointment" 
               className="hidden sm:inline-flex items-center px-6 py-2.5 bg-teal-600 hover:bg-teal-700 text-white font-medium rounded-lg transition-colors shadow-md hover:shadow-lg"
