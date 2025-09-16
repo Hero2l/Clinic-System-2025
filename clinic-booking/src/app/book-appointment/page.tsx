@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import clsx from "clsx";
 
 // Mock data for available time slots by date
 const mockAvailableSlots: { [key: string]: string[] } = {
@@ -26,35 +27,49 @@ const StepsIndicator = ({ currentStep }: { currentStep: number }) => {
   const steps = ["Appointment Details", "Patient's Info", "Confirmation", "Completed"];
 
   return (
-    <div className="flex items-center justify-center mb-12" role="progressbar" aria-valuenow={currentStep} aria-valuemin={1} aria-valuemax={4}>
+    // Use padding to prevent content from touching screen edges on mobile
+    <div className="flex items-start justify-center mb-12 w-full px-4" role="progressbar" aria-valuenow={currentStep} aria-valuemin={1} aria-valuemax={4}>
       {steps.map((step, index) => {
         const stepNumber = index + 1;
         const isCompleted = stepNumber < currentStep;
         const isActive = stepNumber === currentStep;
 
         return (
-          <div key={stepNumber} className="flex items-center">
+          <div key={stepNumber} className="flex items-start flex-1">
+            {/* Step circle and label container */}
             <div className="flex flex-col items-center">
               <div
-                className={`w-10 h-10 rounded-full flex items-center justify-center text-lg font-bold transition-all duration-300
-                  ${isCompleted ? "bg-teal-500 text-white" : ""}
-                  ${isActive ? "bg-teal-500 text-white ring-4 ring-teal-200" : ""}
-                  ${!isCompleted && !isActive ? "bg-white border-2 border-gray-300 text-gray-400" : ""}
-                `}
+                className={clsx(
+                  "w-10 h-10 rounded-full flex items-center justify-center text-lg font-bold transition-all duration-300",
+                  {
+                    "bg-teal-500 text-white": isCompleted,
+                    "bg-teal-500 text-white ring-4 ring-teal-200": isActive,
+                    "bg-white border-2 border-gray-300 text-gray-400": !isCompleted && !isActive,
+                  }
+                )}
                 aria-label={`Step ${stepNumber}: ${step}`}
               >
                 {isCompleted ? "✓" : stepNumber}
               </div>
               <p
-                className={`mt-2 text-sm font-medium text-center transition-all duration-300 ${
-                  isActive || isCompleted ? "text-teal-600" : "text-gray-400"
-                }`}
+                className={clsx(
+                  // CHANGE: Added w-20 to force text wrapping on small screens
+                  // CHANGE: Made font size responsive (smaller on mobile)
+                  "mt-2 text-center text-xs sm:text-sm font-medium transition-all duration-300 w-20",
+                  {
+                    "text-teal-600": isActive || isCompleted,
+                    "text-gray-400": !isActive && !isCompleted,
+                  }
+                )}
               >
                 {step}
               </p>
             </div>
+
+            {/* Connector line */}
             {stepNumber < steps.length && (
-              <div className={`flex-auto border-t-2 mx-4 transition-all duration-300 ${isCompleted ? "border-teal-500" : "border-gray-300"}`} />
+              // CHANGE: Reduced horizontal margin on mobile (mx-2) and increased it on larger screens (sm:mx-4)
+              <div className={`flex-auto border-t-2 mt-5 mx-2 sm:mx-4 transition-all duration-300 ${isCompleted ? "border-teal-500" : "border-gray-300"}`} />
             )}
           </div>
         );
@@ -64,39 +79,39 @@ const StepsIndicator = ({ currentStep }: { currentStep: number }) => {
 };
 
 // Calendar component for date selection
-const Calendar = ({ selectedDate, onDateSelect, availableDates }: { 
-  selectedDate: string; 
+const Calendar = ({ selectedDate, onDateSelect, availableDates }: {
+  selectedDate: string;
   onDateSelect: (date: string) => void;
   availableDates: string[];
 }) => {
   const today = new Date();
   const currentMonth = today.getMonth();
   const currentYear = today.getFullYear();
-  
+
   const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
   const firstDayOfMonth = new Date(currentYear, currentMonth, 1).getDay();
-  
+
   const monthNames = ["January", "February", "March", "April", "May", "June",
     "July", "August", "September", "October", "November", "December"
   ];
-  
+
   const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-  
+
   const formatDate = (day: number) => {
     const date = new Date(currentYear, currentMonth, day);
     return date.toISOString().split('T')[0];
   };
-  
+
   const isDateAvailable = (day: number) => {
     const dateStr = formatDate(day);
     const date = new Date(currentYear, currentMonth, day);
     return date >= today && availableDates.includes(dateStr);
   };
-  
+
   const isDateSelected = (day: number) => {
     return selectedDate === formatDate(day);
   };
-  
+
   return (
     <div className="bg-white border-2 border-gray-200 rounded-xl p-4">
       <div className="text-center mb-4">
@@ -104,7 +119,7 @@ const Calendar = ({ selectedDate, onDateSelect, availableDates }: {
           {monthNames[currentMonth]} {currentYear}
         </h3>
       </div>
-      
+
       <div className="grid grid-cols-7 gap-1 mb-2">
         {dayNames.map(day => (
           <div key={day} className="text-center text-sm font-medium text-gray-500 p-2">
@@ -112,32 +127,31 @@ const Calendar = ({ selectedDate, onDateSelect, availableDates }: {
           </div>
         ))}
       </div>
-      
+
       <div className="grid grid-cols-7 gap-1">
         {/* Empty cells for days before month starts */}
         {Array.from({ length: firstDayOfMonth }, (_, i) => (
           <div key={`empty-${i}`} className="p-2"></div>
         ))}
-        
+
         {/* Days of the month */}
         {Array.from({ length: daysInMonth }, (_, i) => {
           const day = i + 1;
           const available = isDateAvailable(day);
           const selected = isDateSelected(day);
-          
+
           return (
             <button
               key={day}
               type="button"
               onClick={() => available && onDateSelect(formatDate(day))}
               disabled={!available}
-              className={`p-2 text-sm rounded-lg transition-all duration-200 ${
-                selected 
-                  ? "bg-teal-500 text-white font-semibold" 
-                  : available 
-                    ? "hover:bg-teal-100 text-gray-700" 
+              className={`p-2 text-sm rounded-lg transition-all duration-200 ${selected
+                  ? "bg-teal-500 text-white font-semibold"
+                  : available
+                    ? "hover:bg-teal-100 text-gray-700"
                     : "text-gray-300 cursor-not-allowed"
-              }`}
+                }`}
               aria-label={`${available ? 'Select' : 'Unavailable'} ${monthNames[currentMonth]} ${day}, ${currentYear}`}
             >
               {day}
@@ -157,7 +171,7 @@ const TimeSlots = ({ selectedDate, selectedTime, onTimeSelect }: {
 }) => {
   const availableSlots = mockAvailableSlots[selectedDate] || [];
   const bookedForDate = bookedSlots[selectedDate] || [];
-  
+
   if (!selectedDate) {
     return (
       <div className="text-center text-gray-500 py-8">
@@ -165,7 +179,7 @@ const TimeSlots = ({ selectedDate, selectedTime, onTimeSelect }: {
       </div>
     );
   }
-  
+
   if (availableSlots.length === 0) {
     return (
       <div className="text-center text-gray-500 py-8">
@@ -173,26 +187,25 @@ const TimeSlots = ({ selectedDate, selectedTime, onTimeSelect }: {
       </div>
     );
   }
-  
+
   return (
     <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
       {availableSlots.map((time) => {
         const isBooked = bookedForDate.includes(time);
         const isSelected = selectedTime === time;
-        
+
         return (
           <button
             key={time}
             type="button"
             onClick={() => !isBooked && onTimeSelect(time)}
             disabled={isBooked}
-            className={`p-3 rounded-lg border-2 text-sm font-medium transition-all duration-200 ${
-              isSelected
+            className={`p-3 rounded-lg border-2 text-sm font-medium transition-all duration-200 ${isSelected
                 ? "bg-teal-500 text-white border-teal-500"
                 : isBooked
                   ? "bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed"
                   : "bg-white text-gray-700 border-gray-200 hover:border-teal-300 hover:bg-teal-50"
-            }`}
+              }`}
             aria-label={`${isBooked ? 'Unavailable' : isSelected ? 'Selected' : 'Available'} time slot at ${time}`}
           >
             {time}
@@ -222,11 +235,11 @@ const ConfirmationSummary = ({ form }: { form: any }) => {
 
   const formatDate = (dateStr: string) => {
     const date = new Date(dateStr);
-    return date.toLocaleDateString('en-US', { 
-      weekday: 'long', 
-      year: 'numeric', 
-      month: 'long', 
-      day: 'numeric' 
+    return date.toLocaleDateString('en-US', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
     });
   };
 
@@ -234,48 +247,48 @@ const ConfirmationSummary = ({ form }: { form: any }) => {
     const [hours, minutes] = timeStr.split(':');
     const date = new Date();
     date.setHours(parseInt(hours), parseInt(minutes));
-    return date.toLocaleTimeString('en-US', { 
-      hour: 'numeric', 
+    return date.toLocaleTimeString('en-US', {
+      hour: 'numeric',
       minute: '2-digit',
-      hour12: true 
+      hour12: true
     });
   };
 
   return (
     <div className="bg-gray-50 rounded-xl p-6 space-y-4">
       <h3 className="text-xl font-semibold text-gray-900 mb-4">Appointment Summary</h3>
-      
+
       <div className="grid gap-4">
         <div className="flex justify-between">
           <span className="text-gray-600 font-medium">Service:</span>
           <span className="text-gray-900">{serviceLabels[form.service] || form.service}</span>
         </div>
-        
+
         <div className="flex justify-between">
           <span className="text-gray-600 font-medium">Date:</span>
           <span className="text-gray-900">{formatDate(form.date)}</span>
         </div>
-        
+
         <div className="flex justify-between">
           <span className="text-gray-600 font-medium">Time:</span>
           <span className="text-gray-900">{formatTime(form.time)}</span>
         </div>
-        
+
         <div className="flex justify-between">
           <span className="text-gray-600 font-medium">Patient:</span>
           <span className="text-gray-900">{form.name}</span>
         </div>
-        
+
         <div className="flex justify-between">
           <span className="text-gray-600 font-medium">Email:</span>
           <span className="text-gray-900">{form.email}</span>
         </div>
-        
+
         <div className="flex justify-between">
           <span className="text-gray-600 font-medium">Phone:</span>
           <span className="text-gray-900">{form.phone}</span>
         </div>
-        
+
         {form.reason && (
           <div className="pt-2 border-t border-gray-200">
             <span className="text-gray-600 font-medium block mb-2">Reason for Visit:</span>
@@ -322,14 +335,14 @@ export default function BookAppointmentForm() {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    
+
     // Apply character limits
     let limitedValue = value;
     if (name === 'name' && value.length > 100) limitedValue = value.slice(0, 100);
     if (name === 'email' && value.length > 254) limitedValue = value.slice(0, 254);
     if (name === 'phone' && value.length > 20) limitedValue = value.slice(0, 20);
     if (name === 'reason' && value.length > 500) limitedValue = value.slice(0, 500);
-    
+
     setForm({ ...form, [name]: limitedValue });
     if (errors[name]) {
       setErrors({ ...errors, [name]: "" });
@@ -364,7 +377,7 @@ export default function BookAppointmentForm() {
     setCurrentStep((prev) => prev - 1);
     setErrors({});
   };
-  
+
   const resetForm = () => {
     setForm({ name: "", email: "", phone: "", service: "", date: "", time: "", reason: "" });
     setErrors({});
@@ -396,7 +409,7 @@ export default function BookAppointmentForm() {
       <header>
         <h1 className="text-3xl font-bold text-gray-900 mb-8 text-center">Book Your Medical Appointment</h1>
       </header>
-      
+
       <StepsIndicator currentStep={currentStep} />
 
       <main>
@@ -404,17 +417,17 @@ export default function BookAppointmentForm() {
           {currentStep === 1 && (
             <section aria-labelledby="step1-heading">
               <h2 id="step1-heading" className="sr-only">Appointment Details</h2>
-              
+
               <div className="mb-6">
                 <label htmlFor="service" className="block text-gray-700 font-medium mb-2">
                   Choose Service *
                 </label>
-                <select 
+                <select
                   id="service"
-                  name="service" 
-                  value={form.service} 
-                  onChange={handleChange} 
-                  className={`w-full border-2 rounded-xl px-4 py-3 bg-gray-50 focus:ring-2 focus:ring-teal-400 focus:border-teal-400 outline-none transition-all duration-300 ${errors.service ? "border-red-400" : "border-gray-200"}`} 
+                  name="service"
+                  value={form.service}
+                  onChange={handleChange}
+                  className={`w-full border-2 rounded-xl px-4 py-3 bg-gray-50 focus:ring-2 focus:ring-teal-400 focus:border-teal-400 outline-none transition-all duration-300 ${errors.service ? "border-red-400" : "border-gray-200"}`}
                   required
                   aria-describedby={errors.service ? "service-error" : undefined}
                   aria-invalid={!!errors.service}
@@ -438,18 +451,18 @@ export default function BookAppointmentForm() {
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
                 <div>
                   <label className="block text-gray-700 font-medium mb-2">Select Date *</label>
-                  <Calendar 
+                  <Calendar
                     selectedDate={form.date}
                     onDateSelect={handleDateSelect}
                     availableDates={availableDates}
                   />
                   {errors.date && <p className="text-red-400 text-sm mt-2" role="alert">{errors.date}</p>}
                 </div>
-                
+
                 <div>
                   <label className="block text-gray-700 font-medium mb-2">Select Time *</label>
                   <div className="bg-white border-2 border-gray-200 rounded-xl p-4 min-h-[300px]">
-                    <TimeSlots 
+                    <TimeSlots
                       selectedDate={form.date}
                       selectedTime={form.time}
                       onTimeSelect={handleTimeSelect}
@@ -464,22 +477,22 @@ export default function BookAppointmentForm() {
                   Reason for Visit (Optional)
                   <span className="text-sm text-gray-500 font-normal ml-2">({form.reason.length}/500)</span>
                 </label>
-                <textarea 
+                <textarea
                   id="reason"
-                  name="reason" 
-                  value={form.reason} 
-                  onChange={handleChange} 
-                  rows={4} 
+                  name="reason"
+                  value={form.reason}
+                  onChange={handleChange}
+                  rows={4}
                   className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 bg-gray-50 focus:ring-2 focus:ring-teal-400 focus:border-teal-400 outline-none transition-all duration-300"
                   placeholder="Please describe the reason for your visit..."
                   maxLength={500}
                 />
               </div>
-              
+
               <div className="pt-4">
-                <button 
+                <button
                   type="button"
-                  onClick={handleNext} 
+                  onClick={handleNext}
                   className="w-full bg-teal-500 hover:bg-teal-600 text-white font-semibold rounded-xl px-6 py-3 transition-all duration-300 focus:ring-4 focus:ring-teal-200"
                 >
                   Next Step
@@ -491,20 +504,20 @@ export default function BookAppointmentForm() {
           {currentStep === 2 && (
             <section aria-labelledby="step2-heading">
               <h2 id="step2-heading" className="sr-only">Patient Information</h2>
-              
+
               <div className="mb-6">
                 <label htmlFor="name" className="block text-gray-700 font-medium mb-2">
                   Full Name *
                   <span className="text-sm text-gray-500 font-normal ml-2">({form.name.length}/100)</span>
                 </label>
-                <input 
-                  type="text" 
+                <input
+                  type="text"
                   id="name"
-                  name="name" 
-                  value={form.name} 
-                  onChange={handleChange} 
-                  className={`w-full border-2 rounded-xl px-4 py-3 bg-gray-50 focus:ring-2 focus:ring-teal-400 focus:border-teal-400 outline-none transition-all duration-300 ${errors.name ? "border-red-400" : "border-gray-200"}`} 
-                  required 
+                  name="name"
+                  value={form.name}
+                  onChange={handleChange}
+                  className={`w-full border-2 rounded-xl px-4 py-3 bg-gray-50 focus:ring-2 focus:ring-teal-400 focus:border-teal-400 outline-none transition-all duration-300 ${errors.name ? "border-red-400" : "border-gray-200"}`}
+                  required
                   disabled={isSubmitting}
                   maxLength={100}
                   aria-describedby={errors.name ? "name-error" : undefined}
@@ -519,14 +532,14 @@ export default function BookAppointmentForm() {
                     Email Address *
                     <span className="text-sm text-gray-500 font-normal ml-2">({form.email.length}/254)</span>
                   </label>
-                  <input 
-                    type="email" 
+                  <input
+                    type="email"
                     id="email"
-                    name="email" 
-                    value={form.email} 
-                    onChange={handleChange} 
-                    className={`w-full border-2 rounded-xl px-4 py-3 bg-gray-50 focus:ring-2 focus:ring-teal-400 focus:border-teal-400 outline-none transition-all duration-300 ${errors.email ? "border-red-400" : "border-gray-200"}`} 
-                    required 
+                    name="email"
+                    value={form.email}
+                    onChange={handleChange}
+                    className={`w-full border-2 rounded-xl px-4 py-3 bg-gray-50 focus:ring-2 focus:ring-teal-400 focus:border-teal-400 outline-none transition-all duration-300 ${errors.email ? "border-red-400" : "border-gray-200"}`}
+                    required
                     disabled={isSubmitting}
                     maxLength={254}
                     aria-describedby={errors.email ? "email-error" : undefined}
@@ -534,20 +547,20 @@ export default function BookAppointmentForm() {
                   />
                   {errors.email && <p id="email-error" className="text-red-400 text-sm mt-2" role="alert">{errors.email}</p>}
                 </div>
-                
+
                 <div>
                   <label htmlFor="phone" className="block text-gray-700 font-medium mb-2">
                     Phone Number *
                     <span className="text-sm text-gray-500 font-normal ml-2">({form.phone.length}/20)</span>
                   </label>
-                  <input 
-                    type="tel" 
+                  <input
+                    type="tel"
                     id="phone"
-                    name="phone" 
-                    value={form.phone} 
-                    onChange={handleChange} 
-                    className={`w-full border-2 rounded-xl px-4 py-3 bg-gray-50 focus:ring-2 focus:ring-teal-400 focus:border-teal-400 outline-none transition-all duration-300 ${errors.phone ? "border-red-400" : "border-gray-200"}`} 
-                    required 
+                    name="phone"
+                    value={form.phone}
+                    onChange={handleChange}
+                    className={`w-full border-2 rounded-xl px-4 py-3 bg-gray-50 focus:ring-2 focus:ring-teal-400 focus:border-teal-400 outline-none transition-all duration-300 ${errors.phone ? "border-red-400" : "border-gray-200"}`}
+                    required
                     disabled={isSubmitting}
                     placeholder="+1234567890"
                     maxLength={20}
@@ -558,16 +571,16 @@ export default function BookAppointmentForm() {
                   {errors.phone && <p id="phone-error" className="text-red-400 text-sm mt-2" role="alert">{errors.phone}</p>}
                 </div>
               </div>
-              
+
               <div className="flex flex-col sm:flex-row gap-4 pt-4">
-                <button 
-                  type="button" 
-                  onClick={handleBack} 
+                <button
+                  type="button"
+                  onClick={handleBack}
                   className="w-full bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold rounded-xl px-6 py-3 transition-all duration-300 focus:ring-4 focus:ring-gray-200"
                 >
                   Back
                 </button>
-                <button 
+                <button
                   type="button"
                   onClick={handleNext}
                   className="w-full bg-teal-500 hover:bg-teal-600 text-white font-semibold rounded-xl px-6 py-3 transition-all duration-300 focus:ring-4 focus:ring-teal-200"
@@ -581,9 +594,9 @@ export default function BookAppointmentForm() {
           {currentStep === 3 && (
             <section aria-labelledby="step3-heading">
               <h2 id="step3-heading" className="text-2xl font-bold text-gray-900 mb-6">Confirm Your Appointment</h2>
-              
+
               <ConfirmationSummary form={form} />
-              
+
               <div className="mt-8 p-4 bg-blue-50 border border-blue-200 rounded-xl">
                 <div className="flex items-start">
                   <div className="flex-shrink-0">
@@ -599,19 +612,19 @@ export default function BookAppointmentForm() {
                   </div>
                 </div>
               </div>
-              
+
               <div className="flex flex-col sm:flex-row gap-4 pt-6">
-                <button 
-                  type="button" 
-                  onClick={handleBack} 
+                <button
+                  type="button"
+                  onClick={handleBack}
                   className="w-full bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold rounded-xl px-6 py-3 transition-all duration-300 focus:ring-4 focus:ring-gray-200"
                   disabled={isSubmitting}
                 >
                   Back to Edit
                 </button>
-                <button 
-                  type="submit" 
-                  className={`w-full bg-teal-500 hover:bg-teal-600 text-white font-semibold rounded-xl px-6 py-3 transition-all duration-300 flex items-center justify-center focus:ring-4 focus:ring-teal-200 ${isSubmitting ? "opacity-50 cursor-not-allowed" : ""}`} 
+                <button
+                  type="submit"
+                  className={`w-full bg-teal-500 hover:bg-teal-600 text-white font-semibold rounded-xl px-6 py-3 transition-all duration-300 flex items-center justify-center focus:ring-4 focus:ring-teal-200 ${isSubmitting ? "opacity-50 cursor-not-allowed" : ""}`}
                   disabled={isSubmitting}
                   aria-describedby={isSubmitting ? "submitting-status" : undefined}
                 >
@@ -657,16 +670,16 @@ export default function BookAppointmentForm() {
                 </div>
               </div>
               <div className="flex flex-col sm:flex-row gap-4 justify-center max-w-md mx-auto">
-                <button 
+                <button
                   type="button"
-                  onClick={resetForm} 
+                  onClick={resetForm}
                   className="bg-teal-500 hover:bg-teal-600 text-white font-semibold rounded-xl px-6 py-3 transition-all duration-300 focus:ring-4 focus:ring-teal-200"
                 >
                   Book Another Appointment
                 </button>
-                <button 
+                <button
                   type="button"
-                  onClick={() => window.print()} 
+                  onClick={() => window.print()}
                   className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold rounded-xl px-6 py-3 transition-all duration-300 focus:ring-4 focus:ring-gray-200"
                 >
                   Print Confirmation
