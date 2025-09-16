@@ -62,14 +62,13 @@ export default function ContactPage() {
                             No. 123, Seri Kembangan,<br />Selangor, Malaysia
                         </p>
                     </div>
-
-                    <div className="p-6 bg-gray-50 rounded-xl shadow hover:shadow-md">
-                        <div className="w-12 h-12 mx-auto mb-4 bg-teal-100 text-teal-600 rounded-full flex items-center justify-center">
+                    <div className="p-6 bg-gray-50 rounded-xl shadow hover:shadow-md transition-shadow">
+                        <div className="w-12 h-12 mx-auto mb-4 bg-teal-100 text-teal-600 rounded-full flex items-center justify-center text-2xl">
                             🕒
                         </div>
-                        <h3 className="text-lg font-semibold text-gray-800">Opening Hours</h3>
-                        <p className="text-gray-600">
-                            Mon - Fri: 8am - 8pm <br /> Sat - Sun: 9am - 5pm
+                        <h3 className="text-lg font-semibold text-gray-800 text-center">Open 24/7</h3>
+                        <p className="text-gray-600 text-center">
+                            Available 24 hours a day, <br /> 7 days a week
                         </p>
                     </div>
                 </div>
