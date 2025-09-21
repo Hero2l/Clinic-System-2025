@@ -2,6 +2,7 @@
 import { GoogleMap, useJsApiLoader, Marker } from "@react-google-maps/api";
 import { useMemo, useState, useEffect, useRef } from "react";
 import Image from "next/image";
+import PromoCarousel from "@/components/ui/PromoCarousel";
 
 export default function HomePage() {
   const { isLoaded } = useJsApiLoader({
@@ -94,15 +95,14 @@ export default function HomePage() {
           <div className="text-center max-w-4xl mx-auto">
             <h1 className={`text-5xl lg:text-6xl font-bold text-gray-800 mb-6 leading-tight transition-all duration-1000 ${visibleSections.hero ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
               }`}>
-              Welcome to{" "}
+              Your Health, Our Priority at{" "}
               <span className="text-teal-600 inline-block hover:scale-105 transition-transform duration-300">
                 Klinik Mekar ‧₊˚ ⋅
               </span>
             </h1>
             <p className={`text-xl text-gray-600 mb-8 leading-relaxed transition-all duration-1000 delay-200 ${visibleSections.hero ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
               }`}>
-              Experience seamless healthcare with our modern appointment booking system.
-              Connect with trusted doctors and schedule your visit online with just a few clicks.
+              Book appointments online, connect with trusted doctors, and experience seamless care — all in one place.
             </p>
             <div className={`flex flex-col sm:flex-row gap-4 justify-center items-center transition-all duration-1000 delay-400 ${visibleSections.hero ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
               }`}>
@@ -185,6 +185,9 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* Promotions Section */}
+      <PromoCarousel />
 
       {/* About Us Section */}
       <section ref={aboutRef} className="py-16 bg-gray-50 relative overflow-hidden">
