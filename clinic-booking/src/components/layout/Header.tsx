@@ -13,11 +13,9 @@ export default function Header() {
       <div className="container mx-auto px-4 lg:px-6">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
-          <Link href="/" className="flex items-center space-x-2 text-teal-600 hover:text-teal-700 transition-colors">
-            <div className="w-8 h-8 bg-teal-600 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-lg">+</span>
-            </div>
-            <span className="text-xl font-semibold text-gray-800">Klinik Mekar</span>
+          <Link href="/" className="flex items-center space-x-2 text-[var(--medical-green)] hover:text-[var(--success)] transition-colors duration-[var(--transition-normal)]">
+            <img src="/logo/klinik-mekar-logo-only.png" alt="Klinik Mekar Logo" className="w-8 h-8" />
+            <span className="text-xl font-semibold text-[var(--foreground)]">Klinik Mekar</span>
           </Link>
 
           {/* Desktop Navigation */}

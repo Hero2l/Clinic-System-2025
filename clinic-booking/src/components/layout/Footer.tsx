@@ -8,10 +8,12 @@ export default function Footer() {
           {/* Logo and Description */}
           <div className="md:col-span-2">
             <div className="flex items-center space-x-2 mb-4">
-              <div className="w-8 h-8 bg-teal-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-lg">+</span>
+              <div className="flex items-center space-x-2 mb-4">
+                <div>
+                  <img src="/logo/klinik-mekar-logo-only.png" alt="Klinik Mekar Logo" className="w-8 h-8" />
+                </div>
+                <span className="text-xl font-semibold text-[var(--foreground)]">Klinik Mekar</span>
               </div>
-              <span className="text-xl font-semibold text-gray-800">Klinik Mekar</span>
             </div>
             <p className="text-gray-600 mb-4 max-w-md">
               Providing quality healthcare services with easy online appointment booking.
