@@ -108,15 +108,17 @@ export default function Footer() {
 
         {/* Bottom Bar */}
         <div className="border-t border-gray-200 mt-8 pt-6 flex flex-col md:flex-row justify-between items-center">
-          <p className="text-gray-500 text-sm">
-            &copy; {new Date().getFullYear()} Klinik Mekar. All rights reserved.
-          </p>
-          <a
-            href="/admin"
-            className="bg-blue-600 text-white text-xs px-3 py-1 rounded-lg shadow hover:bg-blue-700 transition"
-          >
-            Admin Login
-          </a>
+          <div className="flex flex-col md:flex-row justify-between items-center gap-2 md:gap-4">
+            <p className="text-gray-500 text-sm">
+              &copy; {new Date().getFullYear()} Klinik Mekar. All rights reserved.
+            </p>
+            <a
+              href="/admin"
+              className="bg-teal-600 text-white text-xs px-3 py-1 rounded-lg shadow hover:bg-teal-700 transition"
+            >
+              Admin Login
+            </a>
+          </div>
           <div className="flex items-center space-x-4 mt-4 md:mt-0 text-sm text-gray-500">
             <span>📞 (555) 123-4567</span>
             <span>✉️ info@medicareclinic.com</span>
