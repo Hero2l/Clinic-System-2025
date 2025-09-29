@@ -1,28 +1,13 @@
 // src/app/(admin)/admin/page.tsx
 
 "use client";
-import React, { useState } from 'react';
-import { 
-  Search, 
-  Bell, 
-  MessageSquare, 
-  Calendar,
-  Users,
-  FileText,
-  Settings,
-  HelpCircle,
-  ChevronDown,
-  TrendingUp,
-  TrendingDown,
-  MoreHorizontal,
-  X,
-  BarChart3,
-  Activity,
-  User,
-  Stethoscope,
-  Building2
+import React, { useEffect, useState } from 'react';
+import {
+  Search, Bell, MessageSquare, Calendar, Users, FileText, Settings, HelpCircle, ChevronDown, TrendingUp, TrendingDown,
+  MoreHorizontal, X, BarChart3, Activity, User, Stethoscope, Building2,
 } from 'lucide-react';
-
+import { useRouter } from 'next/navigation';
+import { LogOut } from 'lucide-react';
 // Mock data
 const statsData = [
   {
@@ -33,7 +18,7 @@ const statsData = [
     color: "from-blue-500 to-blue-600"
   },
   {
-    title: "Patients Left", 
+    title: "Patients Left",
     value: 2,
     trend: "down",
     icon: TrendingDown,
@@ -42,7 +27,7 @@ const statsData = [
   {
     title: "Total Patients",
     value: 43,
-    trend: "up", 
+    trend: "up",
     icon: Activity,
     color: "from-red-500 to-red-600"
   },
@@ -64,21 +49,21 @@ const teamMembers = [
     avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=150&h=150&fit=crop&crop=face"
   },
   {
-    id: 2, 
+    id: 2,
     name: "Leatrice Handler",
     role: "Clinical Assistant Professor",
     avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face"
   },
   {
     id: 3,
-    name: "Geoffrey Charlebois", 
+    name: "Geoffrey Charlebois",
     role: "Clinical Associate Director",
     avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face"
   },
   {
     id: 4,
     name: "Hannah Burress",
-    role: "Nurse Practitioner", 
+    role: "Nurse Practitioner",
     avatar: "https://images.unsplash.com/photo-1544725176-7c40e5a71c5e?w=150&h=150&fit=crop&crop=face"
   },
   {
@@ -89,7 +74,7 @@ const teamMembers = [
   },
   {
     id: 6,
-    name: "Louis Bellefeuille", 
+    name: "Louis Bellefeuille",
     role: "Electrophysiologist",
     avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop&crop=face"
   },
@@ -105,7 +90,7 @@ const teamMembers = [
 const chartData = [
   { day: "M", value: 35, label: "14" },
   { day: "T", value: 40, label: "15" },
-  { day: "W", value: 38, label: "16" }, 
+  { day: "W", value: 38, label: "16" },
   { day: "T", value: 45, label: "17", isToday: true },
   { day: "F", value: 30, label: "18" },
   { day: "S", value: 25, label: "19" },
@@ -115,6 +100,47 @@ const chartData = [
 export default function AdminDashboard() {
   const [showWelcome, setShowWelcome] = useState(true);
   const [activeTab, setActiveTab] = useState('Today');
+  const router = useRouter();
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const checkAuth = () => {
+      const authenticated = sessionStorage.getItem('isAdminAuthenticated');
+      if (!authenticated) {
+        router.push('/admin/login');
+      } else {
+        setIsAuthenticated(true);
+      }
+      setIsLoading(false);
+    };
+
+    checkAuth();
+  }, [router]);
+
+  // Logout handler
+  const handleLogout = () => {
+    sessionStorage.removeItem('isAdminAuthenticated');
+    sessionStorage.removeItem('adminEmail');
+    router.push('/admin/login');
+  };
+
+  // Show loading state
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Don't render if not authenticated
+  if (!isAuthenticated) {
+    return null;
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -133,7 +159,7 @@ export default function AdminDashboard() {
         {/* Welcome Card */}
         {showWelcome && (
           <div className="m-4 p-4 bg-gradient-to-br from-blue-50 to-red-50 rounded-xl relative">
-            <button 
+            <button
               onClick={() => setShowWelcome(false)}
               className="absolute top-2 right-2 text-gray-400 hover:text-gray-600"
             >
@@ -183,7 +209,7 @@ export default function AdminDashboard() {
               <span>Administration</span>
             </a>
           </div>
-          
+
           <div className="px-4 mt-8 pt-4 border-t border-gray-100 space-y-2">
             <a href="#" className="flex items-center space-x-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-xl transition-colors">
               <Settings className="w-5 h-5" />
@@ -215,7 +241,7 @@ export default function AdminDashboard() {
               {/* Search */}
               <div className="relative">
                 <Search className="w-5 h-5 text-gray-400 absolute left-3 top-1/2 transform -translate-y-1/2" />
-                <input 
+                <input
                   type="text"
                   placeholder="Search"
                   className="pl-10 pr-4 py-2 border border-gray-200 rounded-xl bg-gray-50 focus:bg-white focus:border-blue-300 focus:ring-2 focus:ring-blue-100 outline-none transition-all"
@@ -238,7 +264,7 @@ export default function AdminDashboard() {
 
               {/* Profile */}
               <div className="flex items-center space-x-3">
-                <img 
+                <img
                   src="https://images.unsplash.com/photo-1494790108755-2616b612b786?w=150&h=150&fit=crop&crop=face"
                   alt="Profile"
                   className="w-10 h-10 rounded-full border-2 border-gray-200"
@@ -250,6 +276,13 @@ export default function AdminDashboard() {
                 <ChevronDown className="w-4 h-4 text-gray-400" />
               </div>
             </div>
+            <button
+              onClick={handleLogout}
+              className="ml-4 p-2 text-gray-600 hover:text-red-600 transition-colors"
+              title="Logout"
+            >
+              <LogOut className="w-5 h-5" />
+            </button>
           </div>
         </header>
 
@@ -262,11 +295,10 @@ export default function AdminDashboard() {
                 <button
                   key={tab}
                   onClick={() => setActiveTab(tab)}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                    activeTab === tab
-                      ? 'bg-white text-gray-900 shadow-sm'
-                      : 'text-gray-600 hover:text-gray-900'
-                  }`}
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${activeTab === tab
+                    ? 'bg-white text-gray-900 shadow-sm'
+                    : 'text-gray-600 hover:text-gray-900'
+                    }`}
                 >
                   {tab}
                 </button>
@@ -315,36 +347,34 @@ export default function AdminDashboard() {
                 <div className="absolute inset-0 flex items-end justify-between px-8">
                   {chartData.map((item, index) => (
                     <div key={index} className="flex flex-col items-center space-y-2">
-                      <div 
-                        className={`w-8 rounded-t-lg transition-all duration-300 ${
-                          item.isToday 
-                            ? 'bg-gradient-to-t from-red-500 to-blue-500' 
-                            : 'bg-gradient-to-t from-red-200 to-blue-200'
-                        }`}
+                      <div
+                        className={`w-8 rounded-t-lg transition-all duration-300 ${item.isToday
+                          ? 'bg-gradient-to-t from-red-500 to-blue-500'
+                          : 'bg-gradient-to-t from-red-200 to-blue-200'
+                          }`}
                         style={{ height: `${item.value * 4}px` }}
                       />
-                      <div className={`px-2 py-1 rounded-full text-xs font-medium ${
-                        item.isToday 
-                          ? 'bg-gradient-to-r from-red-500 to-blue-500 text-white' 
-                          : 'bg-gray-100 text-gray-600'
-                      }`}>
+                      <div className={`px-2 py-1 rounded-full text-xs font-medium ${item.isToday
+                        ? 'bg-gradient-to-r from-red-500 to-blue-500 text-white'
+                        : 'bg-gray-100 text-gray-600'
+                        }`}>
                         {item.day} {item.label}
                       </div>
                     </div>
                   ))}
                 </div>
-                
+
                 {/* Chart lines */}
                 <div className="absolute inset-0 pointer-events-none">
                   {[0, 20, 40, 60].map((line) => (
-                    <div 
+                    <div
                       key={line}
                       className="absolute w-full border-t border-gray-100"
                       style={{ top: `${100 - (line / 60 * 100)}%` }}
                     />
                   ))}
                 </div>
-                
+
                 {/* Y-axis labels */}
                 <div className="absolute left-0 top-0 h-full flex flex-col justify-between text-xs text-gray-400 -ml-8">
                   <span>60</span>
@@ -356,7 +386,7 @@ export default function AdminDashboard() {
                   <span>0</span>
                 </div>
               </div>
-              
+
               <div className="mt-4 text-right">
                 <span className="text-2xl font-bold text-gray-900">43</span>
                 <span className="text-gray-500 ml-1">patients</span>
@@ -383,7 +413,7 @@ export default function AdminDashboard() {
                         {member.avatar}
                       </div>
                     ) : (
-                      <img 
+                      <img
                         src={member.avatar}
                         alt={member.name}
                         className="w-10 h-10 rounded-full object-cover"
