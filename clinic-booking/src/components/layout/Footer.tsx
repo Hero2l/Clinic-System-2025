@@ -111,6 +111,12 @@ export default function Footer() {
           <p className="text-gray-500 text-sm">
             &copy; {new Date().getFullYear()} Klinik Mekar. All rights reserved.
           </p>
+          <a
+            href="/admin"
+            className="bg-blue-600 text-white text-xs px-3 py-1 rounded-lg shadow hover:bg-blue-700 transition"
+          >
+            Admin Login
+          </a>
           <div className="flex items-center space-x-4 mt-4 md:mt-0 text-sm text-gray-500">
             <span>📞 (555) 123-4567</span>
             <span>✉️ info@medicareclinic.com</span>
