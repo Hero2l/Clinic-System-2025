@@ -1,4 +1,19 @@
 import Image from "next/image";
+import dynamic from "next/dynamic";
+
+const GoogleReviews = dynamic(() => import("@/components/ui/GoogleReviews"), {
+  ssr: false,
+  loading: () => (
+    <div className="bg-white rounded-2xl p-8 shadow-lg animate-pulse">
+      <div className="h-8 bg-gray-200 rounded w-1/3 mb-4"></div>
+      <div className="space-y-3">
+        {[1, 2, 3].map((i) => (
+          <div key={i} className="h-24 bg-gray-200 rounded"></div>
+        ))}
+      </div>
+    </div>
+  ),
+});
 
 interface AboutSectionProps {
   isVisible: boolean;
@@ -140,6 +155,11 @@ export default function AboutSection({ isVisible }: AboutSectionProps) {
               </div>
             ))}
           </div>
+        </div>
+
+        {/* Google Reviews Section */}
+        <div className={`mt-20 transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'} delay-1000`}>
+          <GoogleReviews />
         </div>
       </div>
     </section>
