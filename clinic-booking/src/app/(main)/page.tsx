@@ -9,7 +9,7 @@ import CTASection from "@/components/home/CTA";
 import LocationSection from "@/components/home/Location";
 import dynamic from "next/dynamic";
 
-const PromoCarousel = dynamic(() => import("@/components/ui/PromoCarousel"), {
+const PromoCarousel = dynamic(() => import("@/components/home/PromoCarousel"), {
   ssr: false,
 });
 
