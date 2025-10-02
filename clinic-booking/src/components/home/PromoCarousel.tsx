@@ -10,6 +10,8 @@ import { Navigation, Autoplay, Pagination, EffectFade } from "swiper/modules";
 import Image from "next/image";
 import { useState, useRef, useMemo, useEffect } from "react";
 import { ChevronLeft, ChevronRight, Play, Pause, ExternalLink } from "lucide-react";
+import { apiClient } from "../../lib/api";
+import { Promotion } from "../../types/promotion";
 
 const promotions = [
   {
