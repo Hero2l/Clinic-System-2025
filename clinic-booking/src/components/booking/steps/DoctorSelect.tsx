@@ -1,3 +1,5 @@
+// src/components/booking/steps/DoctorSelect.tsx
+
 "use client";
 
 import { useBooking } from "@/context/BookingContext";

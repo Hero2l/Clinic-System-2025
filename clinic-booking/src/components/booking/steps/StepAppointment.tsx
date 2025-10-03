@@ -1,245 +1,298 @@
 "use client";
-
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useBooking } from "@/context/BookingContext";
-import { appointmentSchema } from "@/lib/validation";
-import DoctorSelect from "./DoctorSelect";
-import { Calendar, Clock, FileText, User, ChevronLeft, ChevronRight } from "lucide-react";
-import DateTimeSlots from "../DateTimeSlots";
+import type { BookingForm } from "@/lib/validation";
 
-// Mock booking data - in real app, this would come from your backend
-const mockBookings: Record<string, string[]> = {
-    "2025-09-30": ["09:00", "10:30", "14:00"],
-    "2025-10-01": ["09:00", "10:30", "11:30", "14:00", "15:30"], // Full day
-    "2025-10-02": ["14:00"],
-    "2025-10-03": ["09:00", "15:30"],
-    "2025-10-04": ["10:30", "14:00", "16:00"],
+// Mock data for available time slots by date
+const mockAvailableSlots = {
+  "2025-10-15": ["09:00", "10:30", "14:00", "15:30"],
+  "2025-10-16": ["08:30", "11:00", "13:30", "16:00"],
+  "2025-10-17": ["09:30", "11:30", "14:30", "16:30"],
+  "2025-10-18": ["08:00", "10:00", "15:00", "17:00"],
+  "2025-10-21": ["09:00", "11:00", "13:00", "15:00", "16:30"],
+  "2025-10-22": ["08:30", "10:30", "14:00", "15:30"],
+  "2025-10-23": ["09:00", "12:00", "14:30", "16:00"],
+  "2025-10-24": ["10:00", "11:30", "13:30", "15:30"],
+  "2025-10-25": ["08:00", "09:30", "14:00", "16:30"],
 };
 
-// Available time slots
-const timeSlots = [
-    "09:00", "09:30", "10:00", "10:30", "11:00", "11:30",
-    "14:00", "14:30", "15:00", "15:30", "16:00", "16:30", "17:00"
-];
+const bookedSlots = {
+  "2025-10-15": ["11:30", "16:00"],
+  "2025-10-16": ["09:00", "14:30"],
+  "2025-10-17": ["10:00", "15:00"],
+};
 
-const MONTHS = [
-    "January", "February", "March", "April", "May", "June",
+interface CalendarProps {
+  selectedDate: string;
+  onDateSelect: (date: string) => void;
+  availableDates: string[];
+}
+
+const Calendar = ({ selectedDate, onDateSelect, availableDates }: CalendarProps) => {
+  const today = new Date();
+  const currentMonth = today.getMonth();
+  const currentYear = today.getFullYear();
+  
+  const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+  const firstDayOfMonth = new Date(currentYear, currentMonth, 1).getDay();
+  
+  const monthNames = ["January", "February", "March", "April", "May", "June",
     "July", "August", "September", "October", "November", "December"
-];
+  ];
+  
+  const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+  
+  const formatDate = (day: number | undefined) => {
+    const date = new Date(currentYear, currentMonth, day);
+    return date.toISOString().split('T')[0];
+  };
+  
+  const isDateAvailable = (day: number | undefined) => {
+    const dateStr = formatDate(day);
+    const date = new Date(currentYear, currentMonth, day);
+    return date >= today && availableDates.includes(dateStr);
+  };
+  
+  const isDateSelected = (day: number) => {
+    return selectedDate === formatDate(day);
+  };
+  
+  return (
+    <div className="bg-white border-2 border-gray-200 rounded-xl p-4">
+      <div className="text-center mb-4">
+        <h3 className="text-lg font-semibold text-gray-800">
+          {monthNames[currentMonth]} {currentYear}
+        </h3>
+      </div>
+      
+      <div className="grid grid-cols-7 gap-1 mb-2">
+        {dayNames.map(day => (
+          <div key={day} className="text-center text-sm font-medium text-gray-500 p-2">
+            {day}
+          </div>
+        ))}
+      </div>
+      
+      <div className="grid grid-cols-7 gap-1">
+        {Array.from({ length: firstDayOfMonth }, (_, i) => (
+          <div key={`empty-${i}`} className="p-2"></div>
+        ))}
+        
+        {Array.from({ length: daysInMonth }, (_, i) => {
+          const day = i + 1;
+          const available = isDateAvailable(day);
+          const selected = isDateSelected(day);
+          
+          return (
+            <button
+              key={day}
+              type="button"
+              onClick={() => available && onDateSelect(formatDate(day))}
+              disabled={!available}
+              className={`p-2 text-sm rounded-lg transition-all duration-200 ${
+                selected 
+                  ? "bg-teal-500 text-white font-semibold" 
+                  : available 
+                    ? "hover:bg-teal-100 text-gray-700" 
+                    : "text-gray-300 cursor-not-allowed"
+              }`}
+              aria-label={`${available ? 'Select' : 'Unavailable'} ${monthNames[currentMonth]} ${day}, ${currentYear}`}
+            >
+              {day}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+};
 
-const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+interface TimeSlotsProps {
+  selectedDate: string;
+  selectedTime: string;
+  onTimeSelect: (time: string) => void;
+}
+
+const TimeSlots = ({ selectedDate, selectedTime, onTimeSelect }: TimeSlotsProps) => {
+  const availableSlots = mockAvailableSlots[selectedDate as keyof typeof mockAvailableSlots] || [];
+  const bookedForDate = bookedSlots[selectedDate as keyof typeof bookedSlots] || [];
+  
+  if (!selectedDate) {
+    return (
+      <div className="text-center text-gray-500 py-8">
+        Please select a date first
+      </div>
+    );
+  }
+  
+  if (availableSlots.length === 0) {
+    return (
+      <div className="text-center text-gray-500 py-8">
+        No available slots for this date
+      </div>
+    );
+  }
+  
+  return (
+    <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+      {availableSlots.map((time) => {
+        const isBooked = bookedForDate.includes(time);
+        const isSelected = selectedTime === time;
+        
+        return (
+          <button
+            key={time}
+            type="button"
+            onClick={() => !isBooked && onTimeSelect(time)}
+            disabled={isBooked}
+            className={`p-3 rounded-lg border-2 text-sm font-medium transition-all duration-200 ${
+              isSelected
+                ? "bg-teal-500 text-white border-teal-500"
+                : isBooked
+                  ? "bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed"
+                  : "bg-white text-gray-700 border-gray-200 hover:border-teal-300 hover:bg-teal-50"
+            }`}
+            aria-label={`${isBooked ? 'Unavailable' : isSelected ? 'Selected' : 'Available'} time slot at ${time}`}
+          >
+            {time}
+            {isBooked && <span className="block text-xs mt-1">Booked</span>}
+          </button>
+        );
+      })}
+    </div>
+  );
+};
 
 export default function StepAppointment() {
-    const { form, setForm, setStep } = useBooking();
-    const [errors, setErrors] = useState<Record<string, string>>({});
-    const [currentDate, setCurrentDate] = useState(new Date());
-    const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-    const [availableSlots, setAvailableSlots] = useState<string[]>([]);
+  const { form, setForm, setStep } = useBooking();
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
-    // Get calendar data
-    const year = currentDate.getFullYear();
-    const month = currentDate.getMonth();
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+  const availableDates = Object.keys(mockAvailableSlots);
 
-    // Get days in month and first day of week
-    const daysInMonth = new Date(year, month + 1, 0).getDate();
-    const firstDayOfMonth = new Date(year, month, 1).getDay();
+  const handleChange = (e: React.ChangeEvent<HTMLSelectElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    let limitedValue = value;
+    if (name === 'reason' && value.length > 500) limitedValue = value.slice(0, 500);
+    
+    setForm({ [name]: limitedValue });
+    if (errors[name]) {
+      setErrors({ ...errors, [name]: "" });
+    }
+  };
 
-    // Update available slots when date changes
-    useEffect(() => {
-        if (selectedDate) {
-            const dateString = selectedDate.toISOString().split('T')[0];
-            const bookedSlots = mockBookings[dateString] || [];
-            const available = timeSlots.filter(slot => !bookedSlots.includes(slot));
-            setAvailableSlots(available);
-        }
-    }, [selectedDate]);
+  const handleDateSelect = (date: any) => {
+    setForm({ date, time: "" });
+    if (errors.date) {
+      setErrors({ ...errors, date: "" });
+    }
+  };
 
-    // Handle date selection
-    const handleDateSelect = (day: number) => {
-        const selected = new Date(year, month, day);
-        if (selected < today) return; // Don't allow past dates
+  const handleTimeSelect = (time: any) => {
+    setForm({ time });
+    if (errors.time) {
+      setErrors({ ...errors, time: "" });
+    }
+  };
 
-        setSelectedDate(selected);
-        const dateString = selected.toISOString().split('T')[0];
-        setForm({ date: dateString, time: "" }); // Reset time when date changes
-    };
+  const handleNext = () => {
+    // const newErrors = {};
+    const newErrors: Record<string, string> = {};
+    if (!form.service) newErrors.service = "Please select a service";
+    if (!form.date) newErrors.date = "Date is required";
+    if (!form.time) newErrors.time = "Time is required";
+    
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+    
+    setStep(2);
+  };
 
-    // Handle time selection
-    const handleTimeSelect = (time: string) => {
-        setForm({ time });
-    };
+  return (
+    <section aria-labelledby="step1-heading">
+      <h2 id="step1-heading" className="sr-only">Appointment Details</h2>
+      
+      <div className="mb-6">
+        <label htmlFor="service" className="block text-gray-700 font-medium mb-2">
+          Choose Service *
+        </label>
+        <select 
+          id="service"
+          name="service" 
+          value={form.service} 
+          onChange={handleChange} 
+          className={`w-full border-2 rounded-xl px-4 py-3 bg-gray-50 focus:ring-2 focus:ring-teal-400 focus:border-teal-400 outline-none transition-all duration-300 ${errors.service ? "border-red-400" : "border-gray-200"}`} 
+          required
+          aria-describedby={errors.service ? "service-error" : undefined}
+          aria-invalid={!!errors.service}
+        >
+          <option value="">Select a service</option>
+          <option value="general_consultation">General Consultation</option>
+          <option value="dental_checkup">Dental Check-up</option>
+          <option value="skin_screening">Skin Screening</option>
+          <option value="vaccination">Vaccination/Immunization</option>
+          <option value="pediatric_care">Pediatric Care</option>
+          <option value="womens_health">Women's Health Check</option>
+          <option value="mens_health">Men's Health Check</option>
+          <option value="chronic_disease_management">Chronic Disease Management</option>
+          <option value="minor_surgery">Minor Surgery</option>
+          <option value="nutritional_counseling">Nutritional Counseling</option>
+          <option value="student_enrollment_check_up">Student Enrollment Check Up</option>
+        </select>
+        {errors.service && <p id="service-error" className="text-red-400 text-sm mt-2" role="alert">{errors.service}</p>}
+      </div>
 
-    // Check if a day is available (has less than 5 bookings)
-    const isDayAvailable = (day: number) => {
-        const date = new Date(year, month, day);
-        if (date < today) return false;
-
-        const dateString = date.toISOString().split('T')[0];
-        const bookings = mockBookings[dateString] || [];
-        return bookings.length < 5;
-    };
-
-    // Get booking count for a day
-    const getBookingCount = (day: number) => {
-        const date = new Date(year, month, day);
-        const dateString = date.toISOString().split('T')[0];
-        return mockBookings[dateString]?.length || 0;
-    };
-
-    // Navigation functions
-    const goToPreviousMonth = () => {
-        setCurrentDate(new Date(year, month - 1));
-        setSelectedDate(null);
-        setForm({ date: "", time: "" });
-    };
-
-    const goToNextMonth = () => {
-        setCurrentDate(new Date(year, month + 1));
-        setSelectedDate(null);
-        setForm({ date: "", time: "" });
-    };
-
-    const handleNext = () => {
-        const result = appointmentSchema.safeParse(form);
-        if (!result.success) {
-            const newErrors: Record<string, string> = {};
-            result.error.issues.forEach((issue) => {
-                const field = issue.path[0] as string;
-                newErrors[field] = issue.message;
-            });
-            setErrors(newErrors);
-            return;
-        }
-        setStep(2);
-    };
-
-    return (
-        <div className="space-y-8">
-            {/* Progress Header */}
-            <div className="text-center mb-8">
-                <div className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-blue-50 to-red-50 rounded-full border border-blue-200/50">
-                    <User className="w-5 h-5 text-blue-600 mr-2" />
-                    <span className="text-sm font-medium text-blue-800">Step 1: Choose Your Appointment Details</span>
-                </div>
-            </div>
-
-            {/* Doctor Selection Card */}
-            <div className="bg-white rounded-2xl shadow-lg border border-gray-100/80 overflow-hidden">
-                <div className="bg-gradient-to-r from-blue-600 to-red-600 px-6 py-4">
-                    <h2 className="text-xl font-bold text-white flex items-center">
-                        <User className="w-6 h-6 mr-3" />
-                        Choose Your Doctor
-                    </h2>
-                    <p className="text-blue-100 text-sm mt-1">Select the medical professional you'd like to consult with</p>
-                </div>
-                <div className="p-6">
-                    <DoctorSelect />
-                    {errors.doctor && (
-                        <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg">
-                            <p className="text-red-600 text-sm font-medium">{errors.doctor}</p>
-                        </div>
-                    )}
-                </div>
-            </div>
-
-            {/* Service Selection Card */}
-            <div className="bg-white rounded-2xl shadow-lg border border-gray-100/80 overflow-hidden">
-                <div className="bg-gradient-to-r from-red-500 to-blue-500 px-6 py-4">
-                    <h3 className="text-lg font-bold text-white flex items-center">
-                        <FileText className="w-5 h-5 mr-2" />
-                        Service Type
-                    </h3>
-                    <p className="text-red-100 text-sm mt-1">What type of consultation do you need?</p>
-                </div>
-                <div className="p-6">
-                    <select
-                        value={form.service}
-                        onChange={(e) => setForm({ service: e.target.value })}
-                        className="w-full px-4 py-3 text-gray-800 bg-gray-50 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-100 transition-all duration-200 text-base"
-                    >
-                        <option value="" className="text-gray-500">Select a service type</option>
-                        <option value="general" className="text-gray-800">🩺 General Consultation</option>
-                        <option value="dental" className="text-gray-800">🦷 Dental Checkup</option>
-                        <option value="skin" className="text-gray-800">🧴 Skin Consultation</option>
-                    </select>
-                    {errors.service && (
-                        <div className="mt-3 p-3 bg-red-50 border border-red-200 rounded-lg">
-                            <p className="text-red-600 text-sm font-medium">{errors.service}</p>
-                        </div>
-                    )}
-                </div>
-            </div>
-
-            {/* Date & Time Selection Card */}
-            return (
-            <DateTimeSlots
-                month={month}
-                year={year}
-                today={today}
-                selectedDate={selectedDate}
-                availableSlots={availableSlots}
-                form={form}
-                errors={errors}
-                MONTHS={MONTHS}
-                DAYS={DAYS}
-                firstDayOfMonth={firstDayOfMonth}
-                daysInMonth={daysInMonth}
-                goToPreviousMonth={goToPreviousMonth}
-                goToNextMonth={goToNextMonth}
-                handleDateSelect={handleDateSelect}
-                handleTimeSelect={handleTimeSelect}
-                isDayAvailable={isDayAvailable}
-                getBookingCount={getBookingCount}
-            />
-            );
-
-            {/* Reason/Notes Card */}
-            <div className="bg-white rounded-2xl shadow-lg border border-gray-100/80 overflow-hidden">
-                <div className="bg-gradient-to-r from-green-500 to-blue-500 px-6 py-4">
-                    <h3 className="text-lg font-bold text-white flex items-center">
-                        <FileText className="w-5 h-5 mr-2" />
-                        Additional Notes
-                    </h3>
-                    <p className="text-green-100 text-sm mt-1">Tell us more about your visit (optional)</p>
-                </div>
-                <div className="p-6">
-                    <textarea
-                        value={form.reason || ""}
-                        onChange={(e) => setForm({ reason: e.target.value })}
-                        rows={4}
-                        placeholder="Describe your symptoms, concerns, or any specific requests..."
-                        className="w-full px-4 py-3 text-gray-800 bg-gray-50 border-2 border-gray-200 rounded-xl focus:border-green-500 focus:bg-white focus:ring-2 focus:ring-green-100 transition-all duration-200 resize-none"
-                    />
-                    {errors.reason && (
-                        <div className="mt-3 p-3 bg-red-50 border border-red-200 rounded-lg">
-                            <p className="text-red-600 text-sm font-medium">{errors.reason}</p>
-                        </div>
-                    )}
-                    <p className="text-xs text-gray-500 mt-2">This information helps your doctor prepare for your visit</p>
-                </div>
-            </div>
-
-            {/* Next Button */}
-            <div className="flex justify-end pt-6">
-                <button
-                    onClick={handleNext}
-                    className="group relative px-8 py-4 bg-gradient-to-r from-blue-600 to-red-600 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 focus:ring-4 focus:ring-blue-200"
-                >
-                    <span className="flex items-center">
-                        Continue to Patient Details
-                        <svg
-                            className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform duration-200"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                        >
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                        </svg>
-                    </span>
-                </button>
-            </div>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+        <div>
+          <label className="block text-gray-700 font-medium mb-2">Select Date *</label>
+          <Calendar 
+            selectedDate={form.date}
+            onDateSelect={handleDateSelect}
+            availableDates={availableDates}
+          />
+          {errors.date && <p className="text-red-400 text-sm mt-2" role="alert">{errors.date}</p>}
         </div>
-    );
+        
+        <div>
+          <label className="block text-gray-700 font-medium mb-2">Select Time *</label>
+          <div className="bg-white border-2 border-gray-200 rounded-xl p-4 min-h-[300px]">
+            <TimeSlots 
+              selectedDate={form.date}
+              selectedTime={form.time}
+              onTimeSelect={handleTimeSelect}
+            />
+          </div>
+          {errors.time && <p className="text-red-400 text-sm mt-2" role="alert">{errors.time}</p>}
+        </div>
+      </div>
+
+      <div className="mb-6">
+        <label htmlFor="reason" className="block text-gray-700 font-medium mb-2">
+          Reason for Visit (Optional)
+          <span className="text-sm text-gray-500 font-normal ml-2">({(form.reason || "").length}/500)</span>
+        </label>
+        <textarea 
+          id="reason"
+          name="reason" 
+          value={form.reason || ""} 
+          onChange={handleChange} 
+          rows={4} 
+          className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 bg-gray-50 focus:ring-2 focus:ring-teal-400 focus:border-teal-400 outline-none transition-all duration-300"
+          placeholder="Please describe the reason for your visit..."
+          maxLength={500}
+        />
+      </div>
+      
+      <div className="pt-4">
+        <button 
+          type="button"
+          onClick={handleNext} 
+          className="w-full bg-teal-500 hover:bg-teal-600 text-white font-semibold rounded-xl px-6 py-3 transition-all duration-300 focus:ring-4 focus:ring-teal-200"
+        >
+          Next Step
+        </button>
+      </div>
+    </section>
+  );
 }
