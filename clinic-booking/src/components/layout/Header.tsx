@@ -37,7 +37,7 @@ export default function Header() {
               <img
                 src="/logo/klinik-mekar-logo-only.png"
                 alt="Klinik Mekar Logo"
-                className="w-10 h-10 transition-transform duration-300 group-hover:rotate-12"
+                className="w-10 h-10 transition-transform duration-300"
               />
               <div className="absolute -inset-1 bg-gradient-to-r from-red-500 to-blue-500 rounded-full opacity-0 group-hover:opacity-20 transition-opacity duration-300 blur-sm"></div>
             </div>
@@ -57,13 +57,11 @@ export default function Header() {
             <Link
               href="/"
               className={`relative px-4 py-2 font-medium rounded-lg transition-all duration-300 group ${isActive('/')
-                  ? 'text-red-600 bg-red-50'
-                  : 'text-gray-700 hover:text-red-600 hover:bg-red-50/50'
+                  ? 'text-blue-600 bg-blue-50'
+                  : 'text-gray-700 hover:text-blue-600 hover:bg-blue-50/50'
                 }`}
             >
               Home
-              <div className={`absolute bottom-0 left-1/2 transform -translate-x-1/2 w-0 h-0.5 bg-gradient-to-r from-red-600 to-blue-600 transition-all duration-300 ${isActive('/') ? 'w-8' : 'group-hover:w-6'
-                }`}></div>
             </Link>
 
             <Link
@@ -74,44 +72,36 @@ export default function Header() {
                 }`}
             >
               Doctors
-              <div className={`absolute bottom-0 left-1/2 transform -translate-x-1/2 w-0 h-0.5 bg-gradient-to-r from-red-600 to-blue-600 transition-all duration-300 ${isActive('/doctors') ? 'w-8' : 'group-hover:w-6'
-                }`}></div>
             </Link>
 
             <Link
               href="/services"
               className={`relative px-4 py-2 font-medium rounded-lg transition-all duration-300 group ${isActive('/services')
-                  ? 'text-emerald-600 bg-emerald-50'
-                  : 'text-gray-700 hover:text-emerald-600 hover:bg-emerald-50/50'
+                  ? 'text-blue-600 bg-blue-50'
+                  : 'text-gray-700 hover:text-blue-600 hover:bg-blue-50/50'
                 }`}
             >
               Services
-              <div className={`absolute bottom-0 left-1/2 transform -translate-x-1/2 w-0 h-0.5 bg-gradient-to-r from-red-600 to-blue-600 transition-all duration-300 ${isActive('/services') ? 'w-8' : 'group-hover:w-6'
-                }`}></div>
             </Link>
 
             <Link
               href="/about"
               className={`relative px-4 py-2 font-medium rounded-lg transition-all duration-300 group ${isActive('/about')
-                  ? 'text-purple-600 bg-purple-50'
-                  : 'text-gray-700 hover:text-purple-600 hover:bg-purple-50/50'
+                  ? 'text-blue-600 bg-blue-50'
+                  : 'text-gray-700 hover:text-blue-600 hover:bg-blue-50/50'
                 }`}
             >
               About
-              <div className={`absolute bottom-0 left-1/2 transform -translate-x-1/2 w-0 h-0.5 bg-gradient-to-r from-red-600 to-blue-600 transition-all duration-300 ${isActive('/about') ? 'w-8' : 'group-hover:w-6'
-                }`}></div>
             </Link>
 
             <Link
               href="/contact"
               className={`relative px-4 py-2 font-medium rounded-lg transition-all duration-300 group ${isActive('/contact')
-                  ? 'text-pink-600 bg-pink-50'
-                  : 'text-gray-700 hover:text-pink-600 hover:bg-pink-50/50'
+                  ? 'text-blue-600 bg-blue-50'
+                  : 'text-gray-700 hover:text-blue-600 hover:bg-blue-50/50'
                 }`}
             >
               Contact
-              <div className={`absolute bottom-0 left-1/2 transform -translate-x-1/2 w-0 h-0.5 bg-gradient-to-r from-red-600 to-blue-600 transition-all duration-300 ${isActive('/contact') ? 'w-8' : 'group-hover:w-6'
-                }`}></div>
             </Link>
           </nav>
 
@@ -133,10 +123,10 @@ export default function Header() {
             {pathname !== '/book-appointment' && (
               <Link
                 href="/book-appointment"
-                className="hidden sm:inline-flex items-center px-6 py-2.5 bg-gradient-to-r from-red-600 via-pink-600 to-red-700 hover:from-red-700 hover:via-pink-700 hover:to-red-800 text-white font-semibold rounded-xl transition-all duration-300 shadow-lg hover:shadow-2xl hover:shadow-red-500/25 transform hover:scale-105 hover:-translate-y-0.5 group relative overflow-hidden"
+                className="hidden sm:inline-flex items-center px-6 py-2.5 bg-gradient-to-r from-red-600 via-pink-600 to-red-700 hover:from-red-700 hover:via-pink-700 hover:to-red-800 text-white font-semibold rounded-xl transition-all duration-300 shadow-lg hover:shadow-2xl hover:shadow-red-500/25 group relative overflow-hidden"
               >
                 <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                <svg className="w-5 h-5 mr-2 relative z-10 transition-transform duration-300 group-hover:rotate-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-5 h-5 mr-2 relative z-10 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
                 <span className="relative z-10">Book Now</span>
@@ -169,8 +159,8 @@ export default function Header() {
               <Link
                 href="/"
                 className={`flex items-center px-4 py-3 font-medium rounded-lg transition-all duration-300 ${isActive('/')
-                    ? 'text-red-600 bg-red-50'
-                    : 'text-gray-700 hover:text-red-600 hover:bg-red-50/50'
+                    ? 'text-blue-600 bg-blue-50'
+                    : 'text-gray-700 hover:text-blue-600 hover:bg-blue-50/50'
                   }`}
                 onClick={() => setIsOpen(false)}
               >
@@ -197,8 +187,8 @@ export default function Header() {
               <Link
                 href="/services"
                 className={`flex items-center px-4 py-3 font-medium rounded-lg transition-all duration-300 ${isActive('/services')
-                    ? 'text-emerald-600 bg-emerald-50'
-                    : 'text-gray-700 hover:text-emerald-600 hover:bg-emerald-50/50'
+                    ? 'text-blue-600 bg-blue-50'
+                    : 'text-gray-700 hover:text-blue-600 hover:bg-blue-50/50'
                   }`}
                 onClick={() => setIsOpen(false)}
               >
@@ -211,8 +201,8 @@ export default function Header() {
               <Link
                 href="/about"
                 className={`flex items-center px-4 py-3 font-medium rounded-lg transition-all duration-300 ${isActive('/about')
-                    ? 'text-purple-600 bg-purple-50'
-                    : 'text-gray-700 hover:text-purple-600 hover:bg-purple-50/50'
+                    ? 'text-blue-600 bg-blue-50'
+                    : 'text-gray-700 hover:text-blue-600 hover:bg-blue-50/50'
                   }`}
                 onClick={() => setIsOpen(false)}
               >
@@ -225,8 +215,8 @@ export default function Header() {
               <Link
                 href="/contact"
                 className={`flex items-center px-4 py-3 font-medium rounded-lg transition-all duration-300 ${isActive('/contact')
-                    ? 'text-pink-600 bg-pink-50'
-                    : 'text-gray-700 hover:text-pink-600 hover:bg-pink-50/50'
+                    ? 'text-blue-600 bg-blue-50'
+                    : 'text-gray-700 hover:text-blue-600 hover:bg-blue-50/50'
                   }`}
                 onClick={() => setIsOpen(false)}
               >
