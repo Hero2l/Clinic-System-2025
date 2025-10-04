@@ -1,10 +1,12 @@
 "use client";
 
+import BackgroundHeroLayout from "@/components/ui/BackgroundHeroLayout";
+
 export default function ServicesPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero */}
-      <section className="bg-gradient-to-br from-teal-50 to-blue-50 py-20">
+      <BackgroundHeroLayout heightClassName="min-h-[20vh]">
         <div className="container mx-auto px-4 lg:px-6 text-center">
           <h1 className="text-5xl lg:text-6xl font-bold text-gray-800 mb-4 leading-tight">
             Our <span className="text-teal-600">Services</span>
@@ -14,7 +16,18 @@ export default function ServicesPage() {
             and your family healthy, with trusted doctors and modern facilities.
           </p>
         </div>
-      </section>
+      </BackgroundHeroLayout>
+      {/* <section className="bg-gradient-to-br from-teal-50 to-blue-50 py-20">
+        <div className="container mx-auto px-4 lg:px-6 text-center">
+          <h1 className="text-5xl lg:text-6xl font-bold text-gray-800 mb-4 leading-tight">
+            Our <span className="text-teal-600">Services</span>
+          </h1>
+          <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+            We provide a wide range of healthcare services designed to keep you
+            and your family healthy, with trusted doctors and modern facilities.
+          </p>
+        </div>
+      </section> */}
 
       {/* Services Grid */}
       <section className="py-16 bg-white">

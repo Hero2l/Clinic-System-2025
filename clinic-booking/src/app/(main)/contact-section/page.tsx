@@ -1,5 +1,6 @@
 "use client";
 
+import BackgroundHeroLayout from "@/components/ui/BackgroundHeroLayout";
 import { GoogleMap, useJsApiLoader, Marker } from "@react-google-maps/api";
 import { useMemo } from "react";
 
@@ -14,7 +15,7 @@ export default function ContactPage() {
     return (
         <div className="min-h-screen bg-gray-50">
             {/* Hero */}
-            <section className="bg-gradient-to-br from-teal-50 to-blue-50 py-20">
+            <BackgroundHeroLayout heightClassName="min-h-[20vh]">
                 <div className="container mx-auto px-4 lg:px-6 text-center">
                     <h1 className="text-5xl lg:text-6xl font-bold text-gray-800 mb-4 leading-tight">
                         Contact <span className="text-teal-600">Us</span>
@@ -24,7 +25,18 @@ export default function ContactPage() {
                         information about Klinik Mekar.
                     </p>
                 </div>
-            </section>
+            </BackgroundHeroLayout>
+            {/* <section className="bg-gradient-to-br from-teal-50 to-blue-50 py-20">
+                <div className="container mx-auto px-4 lg:px-6 text-center">
+                    <h1 className="text-5xl lg:text-6xl font-bold text-gray-800 mb-4 leading-tight">
+                        Contact <span className="text-teal-600">Us</span>
+                    </h1>
+                    <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+                        We’re here to assist you with appointments, inquiries, and general
+                        information about Klinik Mekar.
+                    </p>
+                </div>
+            </section> */}
 
             {/* Contact Info Grid */}
             <section className="py-16 bg-white">

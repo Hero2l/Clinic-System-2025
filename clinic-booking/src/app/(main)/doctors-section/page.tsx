@@ -2,12 +2,13 @@
 import Link from "next/link";
 import Image from "next/image";
 import { doctors, staff } from "@/data/doctors-data";
+import BackgroundHeroLayout from "@/components/ui/BackgroundHeroLayout";
 
 export default function DoctorsPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-teal-50 to-blue-50 py-20">
+      <BackgroundHeroLayout heightClassName="min-h-[20vh]">
         <div className="container mx-auto px-4 lg:px-6 text-center">
           <h1 className="text-5xl lg:text-6xl font-bold text-gray-800 mb-4 leading-tight">
             Our <span className="text-teal-600">Doctors</span>
@@ -16,7 +17,7 @@ export default function DoctorsPage() {
             Meet our team of dedicated and highly-qualified medical professionals, committed to providing you with the best care.
           </p>
         </div>
-      </section>
+      </BackgroundHeroLayout>
 
       {/* Doctors Section */}
       <section className="py-16 bg-white">

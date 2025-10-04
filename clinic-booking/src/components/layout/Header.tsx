@@ -65,8 +65,8 @@ export default function Header() {
             </Link>
 
             <Link
-              href="/doctors"
-              className={`relative px-4 py-2 font-medium rounded-lg transition-all duration-300 group ${isActive('/doctors')
+              href="/doctors-section"
+              className={`relative px-4 py-2 font-medium rounded-lg transition-all duration-300 group ${isActive('/doctors-section')
                   ? 'text-blue-600 bg-blue-50'
                   : 'text-gray-700 hover:text-blue-600 hover:bg-blue-50/50'
                 }`}
@@ -75,8 +75,8 @@ export default function Header() {
             </Link>
 
             <Link
-              href="/services"
-              className={`relative px-4 py-2 font-medium rounded-lg transition-all duration-300 group ${isActive('/services')
+              href="/services-section"
+              className={`relative px-4 py-2 font-medium rounded-lg transition-all duration-300 group ${isActive('/services-section')
                   ? 'text-blue-600 bg-blue-50'
                   : 'text-gray-700 hover:text-blue-600 hover:bg-blue-50/50'
                 }`}
@@ -85,8 +85,8 @@ export default function Header() {
             </Link>
 
             <Link
-              href="/about"
-              className={`relative px-4 py-2 font-medium rounded-lg transition-all duration-300 group ${isActive('/about')
+              href="/about-section"
+              className={`relative px-4 py-2 font-medium rounded-lg transition-all duration-300 group ${isActive('/about-section')
                   ? 'text-blue-600 bg-blue-50'
                   : 'text-gray-700 hover:text-blue-600 hover:bg-blue-50/50'
                 }`}
@@ -95,8 +95,8 @@ export default function Header() {
             </Link>
 
             <Link
-              href="/contact"
-              className={`relative px-4 py-2 font-medium rounded-lg transition-all duration-300 group ${isActive('/contact')
+              href="/contact-section"
+              className={`relative px-4 py-2 font-medium rounded-lg transition-all duration-300 group ${isActive('/contact-section')
                   ? 'text-blue-600 bg-blue-50'
                   : 'text-gray-700 hover:text-blue-600 hover:bg-blue-50/50'
                 }`}
@@ -171,8 +171,8 @@ export default function Header() {
               </Link>
 
               <Link
-                href="/doctors"
-                className={`flex items-center px-4 py-3 font-medium rounded-lg transition-all duration-300 ${isActive('/doctors')
+                href="/doctors-section"
+                className={`flex items-center px-4 py-3 font-medium rounded-lg transition-all duration-300 ${isActive('/doctors-section')
                     ? 'text-blue-600 bg-blue-50'
                     : 'text-gray-700 hover:text-blue-600 hover:bg-blue-50/50'
                   }`}
@@ -185,8 +185,8 @@ export default function Header() {
               </Link>
 
               <Link
-                href="/services"
-                className={`flex items-center px-4 py-3 font-medium rounded-lg transition-all duration-300 ${isActive('/services')
+                href="/services-section"
+                className={`flex items-center px-4 py-3 font-medium rounded-lg transition-all duration-300 ${isActive('/services-section')
                     ? 'text-blue-600 bg-blue-50'
                     : 'text-gray-700 hover:text-blue-600 hover:bg-blue-50/50'
                   }`}
@@ -199,8 +199,8 @@ export default function Header() {
               </Link>
 
               <Link
-                href="/about"
-                className={`flex items-center px-4 py-3 font-medium rounded-lg transition-all duration-300 ${isActive('/about')
+                href="/about-section"
+                className={`flex items-center px-4 py-3 font-medium rounded-lg transition-all duration-300 ${isActive('/about-section')
                     ? 'text-blue-600 bg-blue-50'
                     : 'text-gray-700 hover:text-blue-600 hover:bg-blue-50/50'
                   }`}
@@ -213,8 +213,8 @@ export default function Header() {
               </Link>
 
               <Link
-                href="/contact"
-                className={`flex items-center px-4 py-3 font-medium rounded-lg transition-all duration-300 ${isActive('/contact')
+                href="/contact-section"
+                className={`flex items-center px-4 py-3 font-medium rounded-lg transition-all duration-300 ${isActive('/contact-section')
                     ? 'text-blue-600 bg-blue-50'
                     : 'text-gray-700 hover:text-blue-600 hover:bg-blue-50/50'
                   }`}

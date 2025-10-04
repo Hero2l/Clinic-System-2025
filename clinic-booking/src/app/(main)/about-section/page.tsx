@@ -1,10 +1,12 @@
 "use client";
 
+import BackgroundHeroLayout from "@/components/ui/BackgroundHeroLayout";
+
 export default function AboutPage() {
     return (
         <div className="min-h-screen bg-gray-50">
-            {/* Hero / Intro */}
-            <section className="bg-gradient-to-br from-teal-50 to-blue-50 py-20">
+            {/* Hero*/}
+            <BackgroundHeroLayout heightClassName="min-h-[20vh]">
                 <div className="container mx-auto px-4 lg:px-6 text-center">
                     <h1 className="text-5xl lg:text-6xl font-bold text-gray-800 mb-4 leading-tight">
                         About <span className="text-teal-600">Klinik Mekar</span>
@@ -14,7 +16,18 @@ export default function AboutPage() {
                         convenience — putting patients at the heart of everything we do.
                     </p>
                 </div>
-            </section>
+            </BackgroundHeroLayout>
+            {/* <section className="bg-gradient-to-br from-teal-50 to-blue-50 py-20">
+                <div className="container mx-auto px-4 lg:px-6 text-center">
+                    <h1 className="text-5xl lg:text-6xl font-bold text-gray-800 mb-4 leading-tight">
+                        About <span className="text-teal-600">Klinik Mekar</span>
+                    </h1>
+                    <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+                        Dedicated to delivering compassionate healthcare with modern
+                        convenience — putting patients at the heart of everything we do.
+                    </p>
+                </div>
+            </section> */}
 
             {/* Mission */}
             <section className="py-16 bg-white">
