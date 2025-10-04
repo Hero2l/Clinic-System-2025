@@ -92,7 +92,7 @@ const Calendar = ({ selectedDate, onDateSelect, availableDates }: CalendarProps)
   };
 
   return (
-    <div className="bg-white border-2 border-gray-200 rounded-xl p-4">
+    <div className="bg-white border-2 border-gray-200 rounded-xl p-4 h-[380px] flex flex-col">
       <div className="text-center mb-4">
         <h3 className="text-lg font-semibold text-gray-800">
           {monthNames[currentMonth]} {currentYear}
@@ -213,7 +213,7 @@ const DoctorSelection = ({ selectedDoctor, onDoctorSelect, selectedDate, selecte
   };
 
   return (
-    <div className="space-y-4">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       {mockDoctors.map((doctor) => {
         const isAvailable = isDoctorAvailable(doctor);
         const isSelected = selectedDoctor === doctor.id;
@@ -224,46 +224,42 @@ const DoctorSelection = ({ selectedDoctor, onDoctorSelect, selectedDate, selecte
             type="button"
             onClick={() => isAvailable && onDoctorSelect(doctor.id)}
             disabled={!isAvailable}
-            className={`w-full text-left border-2 rounded-xl p-4 transition-all duration-200 ${!isAvailable
+            className={`text-left border-2 rounded-xl p-4 transition-all duration-200 ${!isAvailable
                 ? "border-gray-200 bg-gray-50 cursor-not-allowed opacity-60"
                 : isSelected
                   ? "border-teal-500 bg-teal-50"
                   : "border-gray-200 bg-white hover:border-teal-300 hover:bg-teal-50"
               }`}
           >
-            <div className="flex items-center gap-4">
-              <div className="relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-full">
+            <div className="flex flex-col items-center text-center gap-3">
+              <div className="relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-full">
                 <Image
                   src={doctor.image}
                   alt={`Photo of ${doctor.name}`}
                   fill
                   style={{ objectFit: 'cover' }}
-                  sizes="80px"
+                  sizes="64px"
                 />
               </div>
 
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center justify-between gap-2 mb-2">
-                  <div>
-                    <h4 className={`font-semibold text-lg ${!isAvailable ? "text-gray-400" : "text-gray-800"}`}>
-                      {doctor.name}
-                    </h4>
+              <div className="w-full">
+                <h4 className={`font-semibold text-base mb-2 ${!isAvailable ? "text-gray-400" : "text-gray-800"}`}>
+                  {doctor.name}
+                </h4>
+
+                {isSelected && isAvailable && (
+                  <div className="inline-flex bg-teal-500 text-white rounded-full p-1">
+                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
                   </div>
+                )}
 
-                  {isSelected && isAvailable && (
-                    <div className="bg-teal-500 text-white rounded-full p-1 flex-shrink-0">
-                      <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                      </svg>
-                    </div>
-                  )}
-
-                  {!isAvailable && (
-                    <span className="bg-red-100 text-red-700 text-xs font-medium px-2 py-1 rounded-full flex-shrink-0">
-                      Not Available
-                    </span>
-                  )}
-                </div>
+                {!isAvailable && (
+                  <span className="inline-block bg-red-100 text-red-700 text-xs font-medium px-2 py-1 rounded-full">
+                    Not Available
+                  </span>
+                )}
               </div>
             </div>
           </button>
@@ -373,7 +369,7 @@ export default function StepAppointment() {
 
         <div id="time">
           <label className="block text-gray-700 font-medium mb-2">Select Time *</label>
-          <div className="bg-white border-2 border-gray-200 rounded-xl p-4 min-h-[300px]">
+          <div className="bg-white border-2 border-gray-200 rounded-xl p-4 h-[380px]">
             <TimeSlots
               selectedDate={form.date}
               selectedTime={form.time}
