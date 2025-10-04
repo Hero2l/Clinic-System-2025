@@ -52,7 +52,7 @@ export default function RootLayout({
         <meta name="theme-color" content="#0d9488" />
         <meta name="msapplication-TileColor" content="#0d9488" />
       </head>
-      <body className="min-h-screen flex flex-col bg-gray-50 font-sans antialiased">
+      <body className="min-h-screen bg-gray-50 font-sans antialiased">
         {/* Skip to main content for accessibility */}
         <a
           href="#main-content"
