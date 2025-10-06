@@ -8,6 +8,8 @@ import {
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { LogOut } from 'lucide-react';
+import Sidebar from './dashboard/components/Sidebar';
+import useAuth from '@/lib/hooks/useAuth';
 // Mock data
 const statsData = [
   {
@@ -40,53 +42,6 @@ const statsData = [
   }
 ];
 
-const teamMembers = [
-  {
-    id: 1,
-    name: "Lora Hudson",
-    role: "Cardiologist",
-    isYou: true,
-    avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=150&h=150&fit=crop&crop=face"
-  },
-  {
-    id: 2,
-    name: "Leatrice Handler",
-    role: "Clinical Assistant Professor",
-    avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face"
-  },
-  {
-    id: 3,
-    name: "Geoffrey Charlebois",
-    role: "Clinical Associate Director",
-    avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face"
-  },
-  {
-    id: 4,
-    name: "Hannah Burress",
-    role: "Nurse Practitioner",
-    avatar: "https://images.unsplash.com/photo-1544725176-7c40e5a71c5e?w=150&h=150&fit=crop&crop=face"
-  },
-  {
-    id: 5,
-    name: "Clark Kent",
-    role: "Consultant Cardiologist",
-    avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face"
-  },
-  {
-    id: 6,
-    name: "Louis Bellefeuille",
-    role: "Electrophysiologist",
-    avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop&crop=face"
-  },
-  {
-    id: 7,
-    name: "Cyndy Lillibridge",
-    role: "Nurse Practitioner",
-    avatar: "CL",
-    isInitials: true
-  }
-];
-
 const chartData = [
   { day: "M", value: 35, label: "14" },
   { day: "T", value: 40, label: "15" },
@@ -101,29 +56,11 @@ export default function AdminDashboard() {
   const [showWelcome, setShowWelcome] = useState(true);
   const [activeTab, setActiveTab] = useState('Today');
   const router = useRouter();
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    const checkAuth = () => {
-      const authenticated = sessionStorage.getItem('isAdminAuthenticated');
-      if (!authenticated) {
-        router.push('/admin/login');
-      } else {
-        setIsAuthenticated(true);
-      }
-      setIsLoading(false);
-    };
+  const { isAuthenticated, isLoading, handleLogout } = useAuth("/admin/login");
 
-    checkAuth();
-  }, [router]);
-
-  // Logout handler
-  const handleLogout = () => {
-    sessionStorage.removeItem('isAdminAuthenticated');
-    sessionStorage.removeItem('adminEmail');
-    router.push('/admin/login');
-  };
+  if (isLoading) return <p>Loading...</p>;
+  if (!isAuthenticated) return null;
 
   // Show loading state
   if (isLoading) {
@@ -145,84 +82,7 @@ export default function AdminDashboard() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Sidebar */}
-      <div className="fixed left-0 top-0 h-full w-64 bg-white shadow-lg border-r border-gray-100 z-10">
-        {/* Logo */}
-        <div className="p-6 border-b border-gray-100">
-          <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-gradient-to-r from-red-500 to-blue-500 rounded-xl flex items-center justify-center">
-              <span className="text-white font-bold text-lg">M</span>
-            </div>
-            <span className="font-bold text-xl text-gray-800">MedAdmin</span>
-          </div>
-        </div>
-
-        {/* Welcome Card */}
-        {showWelcome && (
-          <div className="m-4 p-4 bg-gradient-to-br from-blue-50 to-red-50 rounded-xl relative">
-            <button
-              onClick={() => setShowWelcome(false)}
-              className="absolute top-2 right-2 text-gray-400 hover:text-gray-600"
-            >
-              <X className="w-4 h-4" />
-            </button>
-            <div className="flex items-start space-x-3">
-              <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-red-500 rounded-full flex items-center justify-center flex-shrink-0">
-                <User className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <h3 className="font-semibold text-gray-800 text-sm">Good Morning,</h3>
-                <p className="font-bold text-lg text-gray-900">Lora!</p>
-                <p className="text-xs text-gray-600 mt-1">You have</p>
-                <p className="text-sm text-blue-600 font-semibold">5 messages &</p>
-                <p className="text-sm text-blue-600 font-semibold">2 notifications</p>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Navigation */}
-        <nav className="mt-4">
-          <div className="px-4 space-y-2">
-            <a href="#" className="flex items-center space-x-3 px-4 py-3 bg-gradient-to-r from-red-500 to-blue-500 text-white rounded-xl font-medium">
-              <BarChart3 className="w-5 h-5" />
-              <span>Dashboard</span>
-            </a>
-            <a href="#" className="flex items-center space-x-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-xl transition-colors">
-              <Calendar className="w-5 h-5" />
-              <span>Appointments</span>
-            </a>
-            <a href="#" className="flex items-center space-x-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-xl transition-colors relative">
-              <MessageSquare className="w-5 h-5" />
-              <span>Messages</span>
-              <span className="absolute right-3 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">5</span>
-            </a>
-            <a href="#" className="flex items-center space-x-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-xl transition-colors">
-              <Users className="w-5 h-5" />
-              <span>Patients</span>
-            </a>
-            <a href="#" className="flex items-center space-x-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-xl transition-colors">
-              <FileText className="w-5 h-5" />
-              <span>Reports</span>
-            </a>
-            <a href="#" className="flex items-center space-x-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-xl transition-colors">
-              <Building2 className="w-5 h-5" />
-              <span>Administration</span>
-            </a>
-          </div>
-
-          <div className="px-4 mt-8 pt-4 border-t border-gray-100 space-y-2">
-            <a href="#" className="flex items-center space-x-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-xl transition-colors">
-              <Settings className="w-5 h-5" />
-              <span>Settings</span>
-            </a>
-            <a href="#" className="flex items-center space-x-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-xl transition-colors">
-              <HelpCircle className="w-5 h-5" />
-              <span>Help</span>
-            </a>
-          </div>
-        </nav>
-      </div>
-
+      <Sidebar />
       {/* Main Content */}
       <div className="ml-64 min-h-screen">
         {/* Header */}
@@ -329,7 +189,7 @@ export default function AdminDashboard() {
           </div>
 
           {/* Charts Row */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {/* Patients Overview Chart */}
             <div className="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
               <div className="flex items-center justify-between mb-6">
@@ -390,43 +250,6 @@ export default function AdminDashboard() {
               <div className="mt-4 text-right">
                 <span className="text-2xl font-bold text-gray-900">43</span>
                 <span className="text-gray-500 ml-1">patients</span>
-              </div>
-            </div>
-
-            {/* Team Members */}
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-              <div className="flex items-center justify-between mb-6">
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-900">Your Today's Team</h3>
-                  <p className="text-gray-500 text-sm">{teamMembers.length} people</p>
-                </div>
-                <button className="text-gray-400 hover:text-gray-600">
-                  <MoreHorizontal className="w-5 h-5" />
-                </button>
-              </div>
-
-              <div className="space-y-4">
-                {teamMembers.map((member) => (
-                  <div key={member.id} className="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-50 transition-colors">
-                    {member.isInitials ? (
-                      <div className="w-10 h-10 bg-gradient-to-r from-blue-400 to-red-400 rounded-full flex items-center justify-center text-white font-semibold text-sm">
-                        {member.avatar}
-                      </div>
-                    ) : (
-                      <img
-                        src={member.avatar}
-                        alt={member.name}
-                        className="w-10 h-10 rounded-full object-cover"
-                      />
-                    )}
-                    <div className="flex-1 min-w-0">
-                      <p className="font-medium text-gray-900 text-sm">
-                        {member.name} {member.isYou && <span className="text-blue-600">(You)</span>}
-                      </p>
-                      <p className="text-gray-500 text-xs truncate">{member.role}</p>
-                    </div>
-                  </div>
-                ))}
               </div>
             </div>
           </div>
