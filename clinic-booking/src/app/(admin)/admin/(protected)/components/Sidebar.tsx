@@ -5,7 +5,6 @@ import { usePathname } from "next/navigation";
 import {
   BarChart3,
   Calendar,
-  MessageSquare,
   Users,
   FileText,
   Building2,
@@ -13,21 +12,133 @@ import {
   HelpCircle,
   X,
   User,
+  ChevronRight,
 } from "lucide-react";
 import { useState } from "react";
 
 export default function Sidebar() {
+  // Types
+  type MenuItem = {
+    icon?: React.ElementType;
+    label: string;
+    href?: string;
+    badge?: number;
+    children?: MenuItem[];
+  };
+
   const pathname = usePathname();
   const [showWelcome, setShowWelcome] = useState(true);
+  const [openMenus, setOpenMenus] = useState<Record<string, boolean>>({});
 
-  const menuItems = [
+  // Toggle submenus
+  const toggleMenu = (label: string) => {
+    setOpenMenus((prev) => ({ ...prev, [label]: !prev[label] }));
+  };
+
+  // Menu structure with nested items
+  const menuItems: MenuItem[] = [
     { icon: BarChart3, label: "Dashboard", href: "/admin/dashboard" },
     { icon: Calendar, label: "Appointments", href: "/admin/appointments" },
-    { icon: MessageSquare, label: "Messages", href: "/admin/messages", badge: 5 },
-    { icon: Users, label: "Patients", href: "/admin/patients" },
-    { icon: FileText, label: "Reports", href: "/admin/reports" },
-    { icon: Building2, label: "Administration", href: "/admin/administration" },
+    {
+      icon: Users,
+      label: "Doctors",
+      children: [
+        { label: "All Doctors", href: "/admin/doctors" },
+        { label: "Add Doctor", href: "/admin/doctors/add" },
+        { label: "Unavailable Slots", href: "/admin/doctors/unavailable" },
+      ],
+    },
+    {
+      icon: FileText,
+      label: "Slots",
+      children: [
+        { label: "Manage Slots", href: "/admin/slots" },
+        { label: "Bulk Import", href: "/admin/slots/bulk" },
+      ],
+    },
+    {
+      icon: Building2,
+      label: "Bookings",
+      children: [
+        { label: "All Bookings", href: "/admin/bookings" },
+        { label: "Cancelled", href: "/admin/bookings/cancelled" },
+        { label: "Rescheduled", href: "/admin/bookings/rescheduled" },
+      ],
+    },
+    {
+      icon: Settings,
+      label: "Services",
+      children: [
+        { label: "Service List", href: "/admin/services" },
+        { label: "Add Service", href: "/admin/services/add" },
+      ],
+    },
+    {
+      icon: BarChart3,
+      label: "Analytics",
+      children: [
+        { label: "Overview", href: "/admin/analytics" },
+        { label: "Booking Trends", href: "/admin/analytics/bookings" },
+        { label: "Doctor Utilization", href: "/admin/analytics/doctors" },
+        { label: "No-show Rates", href: "/admin/analytics/noshow" },
+      ],
+    },
   ];
+
+
+
+  // Recursive render for nested menu items
+  const renderMenuItems = (items: MenuItem[], depth = 0) => {
+    return items.map(({ icon: Icon, label, href, badge, children }) => {
+      const isActive = pathname === href;
+      const isOpen = openMenus[label];
+      const hasChildren = children && children.length > 0;
+
+      return (
+        <div key={label} className="w-full">
+          {href ? (
+            <Link
+              href={href}
+              className={`flex items-center space-x-3 px-4 py-3 rounded-xl transition-colors w-full ${isActive
+                ? "bg-gradient-to-r from-red-500 to-blue-500 text-white shadow-sm"
+                : "text-gray-600 hover:bg-gray-50"
+                }`}
+            >
+              {Icon && <Icon className="w-5 h-5" />}
+              <span>{label}</span>
+              {badge && (
+                <span className="ml-auto w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
+                  {badge}
+                </span>
+              )}
+            </Link>
+          ) : (
+            <button
+              onClick={() => hasChildren && toggleMenu(label)}
+              className={`flex items-center space-x-3 px-4 py-3 rounded-xl transition-colors w-full ${isOpen
+                ? "bg-gray-100 text-gray-800"
+                : "text-gray-600 hover:bg-gray-50"
+                }`}
+            >
+              {Icon && <Icon className="w-5 h-5" />}
+              <span>{label}</span>
+              <ChevronRight
+                className={`w-4 h-4 ml-auto transform transition-transform ${isOpen ? "rotate-90" : ""
+                  }`}
+              />
+            </button>
+          )}
+
+          {/* Render children recursively */}
+          {hasChildren && isOpen && (
+            <div className="ml-6 mt-1 space-y-1 border-l border-gray-200 pl-3">
+              {renderMenuItems(children, depth + 1)}
+            </div>
+          )}
+        </div>
+      );
+    });
+  };
 
   return (
     <aside className="fixed left-0 top-0 h-full w-64 bg-white shadow-lg border-r border-gray-100 z-10 flex flex-col">
@@ -43,7 +154,7 @@ export default function Sidebar() {
         <span className="font-bold text-xl text-gray-800">Klinik Mekar</span>
       </div>
 
-      {/* Welcome Message */}
+      {/* Welcome message */}
       {showWelcome && (
         <div className="m-4 p-4 bg-gradient-to-br from-blue-50 to-red-50 rounded-xl relative">
           <button
@@ -58,43 +169,19 @@ export default function Sidebar() {
             </div>
             <div>
               <h3 className="font-semibold text-gray-800 text-sm">Good Morning,</h3>
-              <p className="font-bold text-lg text-gray-900">Lora!</p>
-              <p className="text-xs text-gray-600 mt-1">
-                5 messages & 2 notifications
-              </p>
+              <p className="font-bold text-lg text-gray-900">Lord Commander!</p>
+              <p className="text-xs text-gray-600 mt-1">2 appointments</p>
             </div>
           </div>
         </div>
       )}
 
-      {/* Navigation Menu */}
+      {/* Navigation */}
       <nav className="mt-4 space-y-1 px-4 flex-1 overflow-y-auto">
-        {menuItems.map(({ icon: Icon, label, href, badge }) => {
-          const isActive = pathname === href;
-
-          return (
-            <Link
-              key={label}
-              href={href}
-              className={`flex items-center space-x-3 px-4 py-3 rounded-xl transition-colors ${
-                isActive
-                  ? "bg-gradient-to-r from-red-500 to-blue-500 text-white shadow-sm"
-                  : "text-gray-600 hover:bg-gray-50"
-              }`}
-            >
-              <Icon className="w-5 h-5" />
-              <span>{label}</span>
-              {badge && (
-                <span className="ml-auto w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
-                  {badge}
-                </span>
-              )}
-            </Link>
-          );
-        })}
+        {renderMenuItems(menuItems)}
       </nav>
 
-      {/* Footer Links */}
+      {/* Footer */}
       <div className="px-4 mt-8 pt-4 border-t border-gray-100 space-y-2">
         <Link
           href="/admin/settings"
