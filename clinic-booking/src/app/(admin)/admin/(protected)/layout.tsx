@@ -1,7 +1,7 @@
 // src/app/(admin)/layout.tsx
 "use client";
 
-import '../globals.css';
+import "../../../globals.css";
 import React from "react";
 import useAuth from "@/lib/hooks/useAuth";
 import Sidebar from './components/Sidebar';
