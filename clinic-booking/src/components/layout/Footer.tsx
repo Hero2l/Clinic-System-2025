@@ -113,7 +113,7 @@ export default function Footer() {
               &copy; {new Date().getFullYear()} Klinik Mekar. All rights reserved.
             </p>
             <a
-              href="/admin"
+              href="/admin/login"
               className="bg-teal-600 text-white text-xs px-3 py-1 rounded-lg shadow hover:bg-teal-700 transition"
             >
               Admin Login

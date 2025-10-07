@@ -1,4 +1,5 @@
 "use client";
+import "../../../globals.css";
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Shield, Lock, Mail, Eye, EyeOff, AlertCircle } from 'lucide-react';
@@ -37,7 +38,7 @@ export default function AdminLoginPage() {
       sessionStorage.setItem('adminEmail', formData.email);
       
       // Redirect to admin dashboard
-      router.push('/admin');
+      router.push('/admin/dashboard');
     } else {
       setError('Invalid email or password. Please try again.');
       setIsLoading(false);
