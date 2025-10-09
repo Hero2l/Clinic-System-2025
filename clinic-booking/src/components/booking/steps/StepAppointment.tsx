@@ -393,7 +393,7 @@ export default function StepAppointment() {
         {errors.doctor && <p className="text-red-400 text-sm mt-2" role="alert">{errors.doctor}</p>}
       </div>
 
-      <div className="mb-6">
+      {/* <div className="mb-6">
         <label htmlFor="reason" className="block text-gray-700 font-medium mb-2">
           Reason for Visit (Optional)
           <span className="text-sm text-gray-500 font-normal ml-2">({(form.reason || "").length}/500)</span>
@@ -408,7 +408,7 @@ export default function StepAppointment() {
           placeholder="Please describe the reason for your visit..."
           maxLength={500}
         />
-      </div>
+      </div> */}
 
       <div className="pt-4">
         <button
