@@ -248,7 +248,7 @@ export default function Sidebar({ isOpen }: SidebarProps) {
         </div>
 
         {/* Welcome message (only when open) */}
-        {isOpen && showWelcome && (
+        {/* {isOpen && showWelcome && (
           <div className="m-4 p-4 bg-gradient-to-br from-blue-50 to-red-50 rounded-xl relative">
             <button
               onClick={() => setShowWelcome(false)}
@@ -267,7 +267,7 @@ export default function Sidebar({ isOpen }: SidebarProps) {
               </div>
             </div>
           </div>
-        )}
+        )} */}
 
         {/* Navigation */}
         <nav className="mt-4 space-y-1 px-4 flex-1 overflow-y-auto">
