@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   BarChart3,
+  Megaphone,
   Calendar,
   Users,
   FileText,
@@ -52,7 +53,7 @@ export default function Sidebar({ isOpen }: SidebarProps) {
   // Show flyout for collapsed sidebar
   const showFlyout = (item: MenuItem, iconElement: HTMLDivElement) => {
     if (!item.children || item.children.length === 0) return;
-    
+
     const rect = iconElement.getBoundingClientRect();
     setFlyout({
       item,
@@ -103,6 +104,7 @@ export default function Sidebar({ isOpen }: SidebarProps) {
   // Menu structure with nested items
   const menuItems: MenuItem[] = [
     { icon: BarChart3, label: "Dashboard", href: "/admin/dashboard" },
+    { icon: Megaphone, label: "Promotions", href: "/admin/promotions" },
     { icon: Calendar, label: "Appointments", href: "/admin/appointments" },
     {
       icon: Users,
@@ -114,38 +116,11 @@ export default function Sidebar({ isOpen }: SidebarProps) {
       ],
     },
     {
-      icon: FileText,
-      label: "Slots",
-      children: [
-        { label: "Manage Slots", href: "/admin/slots" },
-        { label: "Bulk Import", href: "/admin/slots/bulk" },
-      ],
-    },
-    {
-      icon: Building2,
-      label: "Bookings",
-      children: [
-        { label: "All Bookings", href: "/admin/bookings" },
-        { label: "Cancelled", href: "/admin/bookings/cancelled" },
-        { label: "Rescheduled", href: "/admin/bookings/rescheduled" },
-      ],
-    },
-    {
       icon: Settings,
       label: "Services",
       children: [
         { label: "Service List", href: "/admin/services" },
         { label: "Add Service", href: "/admin/services/add" },
-      ],
-    },
-    {
-      icon: BarChart3,
-      label: "Analytics",
-      children: [
-        { label: "Overview", href: "/admin/analytics" },
-        { label: "Booking Trends", href: "/admin/analytics/bookings" },
-        { label: "Doctor Utilization", href: "/admin/analytics/doctors" },
-        { label: "No-show Rates", href: "/admin/analytics/noshow" },
       ],
     },
   ];
@@ -162,11 +137,10 @@ export default function Sidebar({ isOpen }: SidebarProps) {
           {href ? (
             <Link
               href={href}
-              className={`flex items-center space-x-3 px-4 py-3 rounded-xl transition-colors w-full ${
-                isActive
-                  ? "bg-gradient-to-r from-red-500 to-blue-500 text-white shadow-sm"
-                  : "text-gray-600 hover:bg-gray-50"
-              }`}
+              className={`flex items-center space-x-3 px-4 py-3 rounded-xl transition-colors w-full ${isActive
+                ? "bg-gradient-to-r from-red-500 to-blue-500 text-white shadow-sm"
+                : "text-gray-600 hover:bg-gray-50"
+                }`}
             >
               {Icon && <Icon className="w-5 h-5" />}
               <span>{label}</span>
@@ -179,16 +153,14 @@ export default function Sidebar({ isOpen }: SidebarProps) {
           ) : (
             <button
               onClick={() => hasChildren && toggleMenu(label)}
-              className={`flex items-center space-x-3 px-4 py-3 rounded-xl transition-colors w-full ${
-                isOpen ? "bg-gray-100 text-gray-800" : "text-gray-600 hover:bg-gray-50"
-              }`}
+              className={`flex items-center space-x-3 px-4 py-3 rounded-xl transition-colors w-full ${isOpen ? "bg-gray-100 text-gray-800" : "text-gray-600 hover:bg-gray-50"
+                }`}
             >
               {Icon && <Icon className="w-5 h-5" />}
               <span>{label}</span>
               <ChevronRight
-                className={`w-4 h-4 ml-auto transform transition-transform ${
-                  isOpen ? "rotate-90" : ""
-                }`}
+                className={`w-4 h-4 ml-auto transform transition-transform ${isOpen ? "rotate-90" : ""
+                  }`}
               />
             </button>
           )}
@@ -217,11 +189,10 @@ export default function Sidebar({ isOpen }: SidebarProps) {
           {href ? (
             <Link
               href={href}
-              className={`relative p-3 rounded-xl transition-colors ${
-                isActive
-                  ? "bg-gradient-to-r from-red-500 to-blue-500 text-white shadow-sm"
-                  : "text-gray-600 hover:bg-gray-50"
-              }`}
+              className={`relative p-3 rounded-xl transition-colors ${isActive
+                ? "bg-gradient-to-r from-red-500 to-blue-500 text-white shadow-sm"
+                : "text-gray-600 hover:bg-gray-50"
+                }`}
             >
               {Icon && <Icon className="w-5 h-5" />}
               {badge && (
@@ -242,11 +213,10 @@ export default function Sidebar({ isOpen }: SidebarProps) {
               onFocus={(e) => hasChildren && showFlyout(item, e.currentTarget)}
               onBlur={() => hasChildren && hideFlyout()}
               onClick={(e) => hasChildren && showFlyout(item, e.currentTarget)}
-              className={`relative p-3 rounded-xl transition-colors cursor-pointer ${
-                isChildActive
-                  ? "bg-gray-100 text-gray-800"
-                  : "text-gray-600 hover:bg-gray-50"
-              }`}
+              className={`relative p-3 rounded-xl transition-colors cursor-pointer ${isChildActive
+                ? "bg-gray-100 text-gray-800"
+                : "text-gray-600 hover:bg-gray-50"
+                }`}
             >
               {Icon && <Icon className="w-5 h-5" />}
               {hasChildren && (
@@ -262,9 +232,8 @@ export default function Sidebar({ isOpen }: SidebarProps) {
   return (
     <>
       <aside
-        className={`fixed left-0 top-0 h-screen bg-white shadow-md transition-all duration-300 z-20 ${
-          isOpen ? "w-64" : "w-20"
-        }`}
+        className={`fixed left-0 top-0 h-screen bg-white shadow-md transition-all duration-300 z-20 ${isOpen ? "w-64" : "w-20"
+          }`}
       >
         {/* Logo */}
         <div className={`p-6 border-b border-gray-100 flex items-center ${isOpen ? "space-x-3" : "justify-center"}`}>
@@ -306,7 +275,7 @@ export default function Sidebar({ isOpen }: SidebarProps) {
         </nav>
 
         {/* Footer */}
-        <div className={`px-4 mt-8 pt-4 border-t border-gray-100 space-y-2 pb-4 ${!isOpen && "flex flex-col items-center"}`}>
+        {/* <div className={`px-4 mt-8 pt-4 border-t border-gray-100 space-y-2 pb-4 ${!isOpen && "flex flex-col items-center"}`}>
           <Link
             href="/admin/settings"
             className={`flex items-center ${isOpen ? "space-x-3 px-4" : "justify-center"} py-3 text-gray-600 hover:bg-gray-50 rounded-xl transition-colors`}
@@ -323,7 +292,7 @@ export default function Sidebar({ isOpen }: SidebarProps) {
             <HelpCircle className="w-5 h-5" />
             {isOpen && <span>Help</span>}
           </Link>
-        </div>
+        </div> */}
       </aside>
 
       {/* Flyout Panel (for collapsed sidebar with nested items) */}
@@ -347,7 +316,7 @@ export default function Sidebar({ isOpen }: SidebarProps) {
               borderRight: "8px solid white",
             }}
           />
-          
+
           {/* Flyout Header */}
           <div className="px-3 py-2 border-b border-gray-100 flex items-center space-x-2">
             {flyout.item.icon && <flyout.item.icon className="w-4 h-4 text-gray-600" />}
@@ -363,11 +332,10 @@ export default function Sidebar({ isOpen }: SidebarProps) {
                   key={child.href}
                   href={child.href!}
                   onClick={hideFlyout}
-                  className={`block px-4 py-2 rounded-md mx-2 my-1 transition-colors text-sm ${
-                    isActive
-                      ? "bg-gradient-to-r from-red-500 to-blue-500 text-white"
-                      : "text-gray-700 hover:bg-gray-100"
-                  }`}
+                  className={`block px-4 py-2 rounded-md mx-2 my-1 transition-colors text-sm ${isActive
+                    ? "bg-gradient-to-r from-red-500 to-blue-500 text-white"
+                    : "text-gray-700 hover:bg-gray-100"
+                    }`}
                 >
                   {child.label}
                 </Link>

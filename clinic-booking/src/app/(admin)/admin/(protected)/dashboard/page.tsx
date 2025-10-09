@@ -11,7 +11,6 @@ const quickStats = [
   {
     title: "Today's Appointments",
     value: 12,
-    change: "+2 from yesterday",
     trend: "up",
     icon: Calendar,
     color: "from-blue-500 to-blue-600"
@@ -19,27 +18,10 @@ const quickStats = [
   {
     title: "New Bookings",
     value: 5,
-    change: "Last 24 hours",
     trend: "up",
     icon: Users,
     color: "from-green-500 to-green-600"
   },
-  {
-    title: "Revenue",
-    value: "$1,200",
-    change: "+15% from yesterday",
-    trend: "up",
-    icon: DollarSign,
-    color: "from-purple-500 to-purple-600"
-  },
-  {
-    title: "Open Slots",
-    value: 45,
-    change: "Available today",
-    trend: "neutral",
-    icon: Clock,
-    color: "from-orange-500 to-orange-600"
-  }
 ];
 
 const recentAppointments = [
@@ -117,28 +99,12 @@ export default function AdminDashboardPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
-      {/* Time Filter */}
-      <div className="mb-6">
-        <div className="flex space-x-1 bg-white rounded-xl p-1 w-fit border border-gray-200 shadow-sm">
-          {['Today', 'This Week', 'This Month'].map((tab) => (
-            <button
-              key={tab}
-              onClick={() => setTimeFilter(tab)}
-              className={`px-6 py-2 rounded-lg text-sm font-medium transition-all ${
-                timeFilter === tab
-                  ? 'bg-gradient-to-r from-red-500 to-blue-500 text-white shadow-md'
-                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
-              }`}
-            >
-              {tab}
-            </button>
-          ))}
-        </div>
-      </div>
+    <div className="relative">
+      {/* Page Title */}
+      <h1 className="text-2xl font-bold text-gray-900 mb-6">Dashboard</h1>
 
       {/* Quick Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6 mb-8">
         {quickStats.map((stat, index) => (
           <div key={index} className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 hover:shadow-lg transition-all duration-300">
             <div className="flex items-start justify-between mb-4">
@@ -153,24 +119,19 @@ export default function AdminDashboardPage() {
             </div>
             <h3 className="text-3xl font-bold text-gray-900 mb-1">{stat.value}</h3>
             <p className="text-gray-600 text-sm font-medium mb-1">{stat.title}</p>
-            <p className="text-gray-400 text-xs">{stat.change}</p>
           </div>
         ))}
       </div>
 
       {/* Main Content Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+      <div className="grid grid-cols-1 lg:grid-cols-1 gap-6 mb-8">
         {/* Recent Appointments */}
         <div className="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h3 className="text-lg font-semibold text-gray-900">Recent Appointments</h3>
-              <p className="text-gray-500 text-sm">Latest booking activity</p>
+              <h3 className="text-lg font-semibold text-gray-900">Today Appointments</h3>
+              {/* <p className="text-gray-500 text-sm">Latest booking activity</p> */}
             </div>
-            <button className="text-blue-600 hover:text-blue-700 text-sm font-medium flex items-center space-x-1">
-              <span>View All</span>
-              <ArrowUpRight className="w-4 h-4" />
-            </button>
           </div>
 
           <div className="overflow-x-auto">
@@ -189,9 +150,6 @@ export default function AdminDashboardPage() {
                   <tr key={appointment.id} className="border-b border-gray-50 hover:bg-gray-50 transition-colors">
                     <td className="py-4 px-4">
                       <div className="flex items-center space-x-3">
-                        <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
-                          <User className="w-4 h-4 text-white" />
-                        </div>
                         <span className="font-medium text-gray-900">{appointment.patient}</span>
                       </div>
                     </td>
@@ -213,136 +171,6 @@ export default function AdminDashboardPage() {
                 ))}
               </tbody>
             </table>
-          </div>
-        </div>
-
-        {/* Alerts & Notifications */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-          <div className="flex items-center justify-between mb-6">
-            <div>
-              <h3 className="text-lg font-semibold text-gray-900">Alerts</h3>
-              <p className="text-gray-500 text-sm">Important notifications</p>
-            </div>
-            <Bell className="w-5 h-5 text-gray-400" />
-          </div>
-
-          <div className="space-y-3">
-            {alerts.map((alert) => (
-              <div key={alert.id} className={`p-4 rounded-xl border ${getAlertColor(alert.type)} transition-all hover:shadow-md`}>
-                <div className="flex items-start space-x-3">
-                  <alert.icon className="w-5 h-5 flex-shrink-0 mt-0.5" />
-                  <div className="flex-1 min-w-0">
-                    <p className="font-semibold text-sm mb-1">{alert.title}</p>
-                    <p className="text-xs opacity-80 mb-2">{alert.message}</p>
-                    <p className="text-xs opacity-60">{alert.time}</p>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* Bottom Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Booking Trends Chart */}
-        <div className="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-          <div className="flex items-center justify-between mb-6">
-            <div>
-              <h3 className="text-lg font-semibold text-gray-900">Booking Trends</h3>
-              <p className="text-gray-500 text-sm">Weekly overview by service</p>
-            </div>
-            <BarChart3 className="w-5 h-5 text-gray-400" />
-          </div>
-
-          {/* Chart */}
-          <div className="relative h-64 mb-4">
-            <div className="absolute inset-0 flex items-end justify-between px-4">
-              {bookingTrendsData.map((item, index) => (
-                <div key={index} className="flex flex-col items-center space-y-2 flex-1">
-                  <div className="w-full max-w-16 space-y-1">
-                    <div
-                      className="w-full rounded-t bg-gradient-to-t from-blue-400 to-blue-500"
-                      style={{ height: `${(item.service1 / 15) * 120}px` }}
-                    />
-                    <div
-                      className="w-full bg-gradient-to-t from-purple-400 to-purple-500"
-                      style={{ height: `${(item.service2 / 15) * 120}px` }}
-                    />
-                    <div
-                      className="w-full rounded-b bg-gradient-to-t from-pink-400 to-pink-500"
-                      style={{ height: `${(item.service3 / 15) * 120}px` }}
-                    />
-                  </div>
-                  <span className="text-xs font-medium text-gray-600">{item.day}</span>
-                  <span className="text-xs font-bold text-gray-900">{item.bookings}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Legend */}
-          <div className="flex items-center justify-center space-x-6 pt-4 border-t border-gray-100">
-            <div className="flex items-center space-x-2">
-              <div className="w-3 h-3 rounded-full bg-gradient-to-r from-blue-400 to-blue-500" />
-              <span className="text-xs text-gray-600">General Checkup</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <div className="w-3 h-3 rounded-full bg-gradient-to-r from-purple-400 to-purple-500" />
-              <span className="text-xs text-gray-600">Dental</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <div className="w-3 h-3 rounded-full bg-gradient-to-r from-pink-400 to-pink-500" />
-              <span className="text-xs text-gray-600">Consultation</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Doctor Load */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-          <div className="flex items-center justify-between mb-6">
-            <div>
-              <h3 className="text-lg font-semibold text-gray-900">Doctor Load</h3>
-              <p className="text-gray-500 text-sm">Staff capacity today</p>
-            </div>
-            <Activity className="w-5 h-5 text-gray-400" />
-          </div>
-
-          <div className="space-y-4">
-            {doctorLoad.map((doctor, index) => (
-              <div key={index} className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className="font-medium text-gray-900 text-sm">{doctor.name}</span>
-                  <span className="text-xs font-semibold text-gray-600">
-                    {doctor.filled}/{doctor.total}
-                  </span>
-                </div>
-                <div className="relative w-full h-2 bg-gray-100 rounded-full overflow-hidden">
-                  <div
-                    className={`absolute left-0 top-0 h-full rounded-full transition-all ${
-                      doctor.status === 'full'
-                        ? 'bg-gradient-to-r from-red-500 to-red-600'
-                        : doctor.status === 'high'
-                        ? 'bg-gradient-to-r from-yellow-500 to-orange-500'
-                        : 'bg-gradient-to-r from-green-500 to-green-600'
-                    }`}
-                    style={{ width: `${doctor.percentage}%` }}
-                  />
-                </div>
-                {doctor.status === 'full' && (
-                  <div className="flex items-center space-x-1 text-red-600 text-xs">
-                    <AlertCircle className="w-3 h-3" />
-                    <span>Fully booked</span>
-                  </div>
-                )}
-                {doctor.status === 'high' && (
-                  <div className="flex items-center space-x-1 text-orange-600 text-xs">
-                    <AlertTriangle className="w-3 h-3" />
-                    <span>High capacity</span>
-                  </div>
-                )}
-              </div>
-            ))}
           </div>
         </div>
       </div>

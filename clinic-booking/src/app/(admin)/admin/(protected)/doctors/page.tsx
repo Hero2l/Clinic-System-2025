@@ -61,21 +61,8 @@ export default function DoctorsPage() {
   return (
     <div className="min-h-screen bg-gray-50 p-5">
 
-      {/* Filters and Search */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-        <div className="flex space-x-2 bg-gray-100 rounded-xl p-1">
-          {["All", "General Practitioner", "Dentist", "Dermatologist"].map((specialty) => (
-            <button
-              key={specialty}
-              onClick={() => setFilter(specialty)}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                filter === specialty ? "bg-white text-gray-900 shadow-sm" : "text-gray-600 hover:text-gray-900"
-              }`}
-            >
-              {specialty}
-            </button>
-          ))}
-        </div>
+      {/* Search */}
+      <div className="flex justify-end items-center gap-4 mb-6">
         <div className="relative w-full sm:w-64">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
           <input
