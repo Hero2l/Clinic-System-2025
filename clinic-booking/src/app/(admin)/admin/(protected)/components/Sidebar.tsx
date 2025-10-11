@@ -105,20 +105,12 @@ export default function Sidebar({ isOpen }: SidebarProps) {
     { icon: BarChart3, label: "Dashboard", href: "/admin/dashboard" },
     { icon: Megaphone, label: "Promotions", href: "/admin/promotions" },
     { icon: Calendar, label: "Appointments", href: "/admin/appointments" },
-    {
-      icon: Settings,
-      label: "Services",
-      children: [
-        { label: "Service List", href: "/admin/services" },
-        { label: "Add Service", href: "/admin/services/add" },
-      ],
-    },
+    { icon: Settings, label: "Services", href: "/admin/services" },
     {
       icon: Users,
       label: "Doctors",
       children: [
         { label: "All Doctors", href: "/admin/doctors" },
-        { label: "Add Doctor", href: "/admin/doctors/add" },
         { label: "Unavailable Slots", href: "/admin/doctors/unavailable" },
       ],
     },

@@ -31,7 +31,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       >
         <Header
           userName="Lora Hudson"
-          userRole="Cardiologist"
+          // userRole="Cardiologist"
           avatarUrl="https://images.unsplash.com/photo-1494790108755-2616b612b786?w=150&h=150&fit=crop&crop=face"
           onLogout={handleLogout}
           onToggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)} // send toggle to Header

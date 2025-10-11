@@ -1,12 +1,12 @@
 "use client";
 
 import React from "react";
-import { Bell, MessageSquare, ChevronDown, LogOut, Menu } from "lucide-react";
+import { Bell, MessageSquare, LogOut, Menu } from "lucide-react";
 
 interface HeaderProps {
   title?: string;
   userName: string;
-  userRole: string;
+  // userRole: string;
   avatarUrl: string;
   onLogout: () => void;
   onToggleSidebar: () => void; // ✅ add this prop
@@ -15,7 +15,7 @@ interface HeaderProps {
 export default function Header({
   title = "Dashboard",
   userName,
-  userRole,
+  // userRole,
   avatarUrl,
   onLogout,
   onToggleSidebar,
@@ -56,9 +56,8 @@ export default function Header({
             />
             <div className="text-right">
               <p className="font-semibold text-gray-900">{userName}</p>
-              <p className="text-sm text-gray-500">{userRole}</p>
+              {/* <p className="text-sm text-gray-500">{userRole}</p> */}
             </div>
-            <ChevronDown className="w-4 h-4 text-gray-400" />
           </div>
 
           {/* Logout */}
