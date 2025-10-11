@@ -101,11 +101,18 @@ export default function Sidebar({ isOpen }: SidebarProps) {
     }
   }, [flyout.item]);
 
-  // Menu structure with nested items
   const menuItems: MenuItem[] = [
     { icon: BarChart3, label: "Dashboard", href: "/admin/dashboard" },
     { icon: Megaphone, label: "Promotions", href: "/admin/promotions" },
     { icon: Calendar, label: "Appointments", href: "/admin/appointments" },
+    {
+      icon: Settings,
+      label: "Services",
+      children: [
+        { label: "Service List", href: "/admin/services" },
+        { label: "Add Service", href: "/admin/services/add" },
+      ],
+    },
     {
       icon: Users,
       label: "Doctors",
@@ -113,14 +120,6 @@ export default function Sidebar({ isOpen }: SidebarProps) {
         { label: "All Doctors", href: "/admin/doctors" },
         { label: "Add Doctor", href: "/admin/doctors/add" },
         { label: "Unavailable Slots", href: "/admin/doctors/unavailable" },
-      ],
-    },
-    {
-      icon: Settings,
-      label: "Services",
-      children: [
-        { label: "Service List", href: "/admin/services" },
-        { label: "Add Service", href: "/admin/services/add" },
       ],
     },
   ];

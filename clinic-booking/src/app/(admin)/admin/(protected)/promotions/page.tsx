@@ -6,6 +6,8 @@ import Link from "next/link";
 import dynamic from "next/dynamic";
 import { format, isAfter, parseISO, isWithinInterval } from "date-fns";
 import { Promotion } from "@/types/promotion";
+import { tableFilter } from "@/lib/hooks/tableFilter";
+import TableFilterPanel from "../components/TableFilterPanel";
 
 const DatePickerWrapper = dynamic(
   () => import("react-datepicker").then((mod) => {
@@ -74,12 +76,6 @@ interface PromotionFormData {
 
 export default function PromotionsPage() {
   const [promotions, setPromotions] = useState<Promotion[]>(mockPromotions);
-  const [filter, setFilter] = useState("All");
-  const [badgeFilter, setBadgeFilter] = useState("All");
-  const [dateFilter, setDateFilter] = useState("All");
-  const [dateRange, setDateRange] = useState<[Date | null, Date | null]>([null, null]);
-  const [startDate, endDate] = dateRange;
-  const [search, setSearch] = useState("");
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [formData, setFormData] = useState<PromotionFormData>({
@@ -95,20 +91,26 @@ export default function PromotionsPage() {
   const [editId, setEditId] = useState<number | null>(null);
 
   // Filter and search logic
-  const filteredPromotions = promotions
-    .filter((promo) => filter === "All" || 
-      (filter === "Active" && isAfter(parseISO(promo.validUntil), new Date())) ||
-      (filter === "Expired" && !isAfter(parseISO(promo.validUntil), new Date())))
-    .filter((promo) => badgeFilter === "All" || promo.badge === badgeFilter)
-    .filter((promo) => dateFilter === "All" || 
-      (dateFilter === "Custom" && startDate && endDate && 
-        isWithinInterval(parseISO(promo.validUntil), { start: startDate, end: endDate }))
-    )
-    .filter((promo) =>
-      promo.title.toLowerCase().includes(search.toLowerCase()) ||
-      promo.description.toLowerCase().includes(search.toLowerCase()) ||
-      promo.badge.toLowerCase().includes(search.toLowerCase())
-    );
+  const {
+    filteredData: filteredPromotions,
+    filter,
+    setFilter,
+    badgeFilter,
+    setBadgeFilter,
+    dateFilter,
+    setDateFilter,
+    dateRange,
+    setDateRange,
+    search,
+    setSearch,
+    resetFilters,
+  } = tableFilter<Promotion>({
+    data: promotions,
+    searchFields: (promo) => [promo.title, promo.description, promo.badge],
+    getDate: (promo) => promo.validUntil,
+    getBadge: (promo) => promo.badge,
+  });
+
 
   // Handle form submission for add/edit
   const handleSubmit = (e: React.FormEvent) => {
@@ -175,19 +177,10 @@ export default function PromotionsPage() {
       {/* Page Title */}
       <h1 className="text-2xl font-bold text-gray-900 mb-6">Promotions Management</h1>
 
-      {/* Filters and Search */}
+      {/* Filters, Search, and Add Button */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
         <div className="flex gap-2 w-full sm:w-auto">
-          {/* Filter Button */}
-          <button
-            onClick={() => setIsFilterOpen(!isFilterOpen)}
-            className="flex items-center px-4 py-2 border border-gray-200 rounded-xl bg-white text-sm font-medium text-gray-600 hover:text-gray-900 focus:ring-2 focus:ring-teal-400"
-          >
-            <Filter className="w-4 h-4 mr-2" />
-            Filters
-          </button>
-
-          {/* Add New Promotion Button */}
+          {/* Add Promotion Button */}
           <button
             onClick={() => {
               resetForm();
@@ -198,106 +191,29 @@ export default function PromotionsPage() {
             <Plus className="w-4 h-4 mr-2" />
             Add Promotion
           </button>
-
-          {/* Filter Modal */}
-          {isFilterOpen && (
-            <>
-              <div
-                className="fixed inset-0 bg-black/30 z-20"
-                onClick={() => setIsFilterOpen(false)}
-              ></div>
-              <div className="absolute z-30 mt-12 w-80 bg-white rounded-xl shadow-lg border border-gray-100 p-4 left-0 sm:left-64 lg:left-64 xl:left-64 animate-in fade-in slide-in-from-top-2 duration-200">
-                <div className="flex justify-between items-center mb-4">
-                  <h2 className="text-sm font-semibold text-gray-900">Filter Promotions</h2>
-                  <button
-                    onClick={() => setIsFilterOpen(false)}
-                    className="text-gray-500 hover:text-gray-700 text-lg"
-                  >
-                    &times;
-                  </button>
-                </div>
-
-                {/* Status Filters */}
-                <div className="mb-4">
-                  <h3 className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-2">Status</h3>
-                  <div className="flex flex-wrap gap-2">
-                    {["All", "Active", "Expired"].map((status) => (
-                      <button
-                        key={status}
-                        onClick={() => setFilter(status)}
-                        className={`px-3 py-1 rounded-lg text-sm font-medium transition-all ${
-                          filter === status ? "bg-teal-500 text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-                        }`}
-                      >
-                        {status}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Badge Filters */}
-                <div className="mb-4">
-                  <h3 className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-2">Badge</h3>
-                  <div className="flex flex-wrap gap-2">
-                    {["All", "Popular", "New", "Limited Time"].map((badge) => (
-                      <button
-                        key={badge}
-                        onClick={() => setBadgeFilter(badge)}
-                        className={`px-3 py-1 rounded-lg text-sm font-medium transition-all ${
-                          badgeFilter === badge ? "bg-teal-500 text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-                        }`}
-                      >
-                        {badge}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Date Range Filter */}
-                <div>
-                  <h3 className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-2">Date Range</h3>
-                  <div className="flex flex-wrap gap-2 mb-3">
-                    {["All", "Custom"].map((dateOption) => (
-                      <button
-                        key={dateOption}
-                        onClick={() => setDateFilter(dateOption)}
-                        className={`px-3 py-1 rounded-lg text-sm font-medium transition-all ${
-                          dateFilter === dateOption ? "bg-teal-500 text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-                        }`}
-                      >
-                        {dateOption}
-                      </button>
-                    ))}
-                  </div>
-                  {dateFilter === "Custom" && (
-                    <div className="mt-2">
-                      <DatePickerWrapper
-                        value={dateRange}
-                        onChange={(update: [Date | null, Date | null]) => setDateRange(update)}
-                        selectsRange
-                        className="w-full border border-gray-200 rounded-lg px-3 py-2 bg-gray-50 text-sm focus:ring-2 focus:ring-teal-400"
-                        placeholderText="Select date range"
-                      />
-                    </div>
-                  )}
-                </div>
-              </div>
-            </>
-          )}
-
-          {/* Search Input */}
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-            <input
-              type="text"
-              placeholder="Search by title, description, or badge"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="pl-10 pr-4 py-2 border border-gray-200 rounded-xl w-full focus:ring-2 focus:ring-teal-400 focus:border-teal-400 outline-none"
-            />
-          </div>
         </div>
+
+        {/* Reusable Filter & Search */}
+        <TableFilterPanel
+          filterState={{
+            filter,
+            setFilter,
+            badgeFilter,
+            setBadgeFilter,
+            dateFilter,
+            setDateFilter,
+            dateRange,
+            setDateRange,
+            search,
+            setSearch,
+            resetFilters,
+          }}
+          badgeOptions={["Popular", "New", "Limited Time"]}
+          showDateFilter={true}
+          showStatusFilter={true}
+        />
       </div>
+
 
       {/* Add/Edit Promotion Modal */}
       {isFormOpen && (
@@ -445,13 +361,12 @@ export default function PromotionsPage() {
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{promo.validUntil}</td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <span
-                    className={`px-2 py-1 text-xs font-medium rounded-full ${
-                      promo.badge === "Popular"
-                        ? "bg-blue-100 text-blue-700"
-                        : promo.badge === "New"
+                    className={`px-2 py-1 text-xs font-medium rounded-full ${promo.badge === "Popular"
+                      ? "bg-blue-100 text-blue-700"
+                      : promo.badge === "New"
                         ? "bg-green-100 text-green-700"
                         : "bg-yellow-100 text-yellow-700"
-                    }`}
+                      }`}
                   >
                     {promo.badge}
                   </span>
