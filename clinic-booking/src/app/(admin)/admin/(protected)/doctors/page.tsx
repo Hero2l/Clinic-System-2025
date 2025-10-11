@@ -1,14 +1,15 @@
 "use client";
 
 import React, { useState } from "react";
-import { Users, Search, Plus, Edit, Trash2 } from "lucide-react";
-import Link from "next/link";
+import { Edit, Trash2 } from "lucide-react";
 import Image from "next/image";
+import { tableFilter } from "@/lib/hooks/tableFilter";
+import TableSection from "../components/TableSection";
+import DoctorModal, { Doctor } from "../components/Modal/DoctorModal";
 
-// Mock doctor data
-const doctors = [
+const mockDoctors: Doctor[] = [
   {
-    id: "dr1",
+    id: 1,
     name: "Dr. Smith",
     image: "/images/doctors/smith.jpg",
     specialty: "General Practitioner",
@@ -20,7 +21,7 @@ const doctors = [
     },
   },
   {
-    id: "dr2",
+    id: 2,
     name: "Dr. Raj Kumar",
     image: "/images/doctors/raj.jpg",
     specialty: "Dentist",
@@ -32,7 +33,7 @@ const doctors = [
     },
   },
   {
-    id: "dr3",
+    id: 3,
     name: "Dr. Lee Kok Seng",
     image: "/images/doctors/lee.jpg",
     specialty: "Dermatologist",
@@ -46,87 +47,134 @@ const doctors = [
 ];
 
 export default function DoctorsPage() {
-  const [search, setSearch] = useState("");
-  const [filter, setFilter] = useState("All");
+  const [doctors, setDoctors] = useState<Doctor[]>(mockDoctors);
+  const [selectedDoctor, setSelectedDoctor] = useState<Doctor | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // Filter and search logic
-  const filteredDoctors = doctors
-    .filter((doc) => filter === "All" || doc.specialty === filter)
-    .filter((doc) =>
-      doc.name.toLowerCase().includes(search.toLowerCase()) ||
-      doc.email.toLowerCase().includes(search.toLowerCase()) ||
-      doc.specialty.toLowerCase().includes(search.toLowerCase())
-    );
+  // Filtering logic (using reusable tableFilter hook)
+  const {
+    filteredData: filteredDoctors,
+    filter,
+    setFilter,
+    badgeFilter,
+    setBadgeFilter,
+    search,
+    setSearch,
+    resetFilters,
+  } = tableFilter<Doctor>({
+    data: doctors,
+    searchFields: (doc) => [doc.name, doc.email, doc.specialty],
+    getBadge: (doc) => doc.specialty,
+  });
+
+  // Add / Edit doctor
+  const handleSaveDoctor = (doctor: Doctor | Omit<Doctor, "id">) => {
+    if ("id" in doctor) {
+      // Update existing doctor
+      setDoctors((prev) =>
+        prev.map((d) => (d.id === doctor.id ? doctor : d))
+      );
+    } else {
+      // Add new doctor
+      const newDoctor: Doctor = {
+        ...doctor,
+        id: Math.max(...doctors.map((d) => d.id)) + 1,
+        unavailableSlots: {},
+      };
+      setDoctors((prev) => [...prev, newDoctor]);
+    }
+    setIsModalOpen(false);
+    setSelectedDoctor(null);
+  };
+
+  // Delete doctor
+  const handleDelete = (id: number) => {
+    if (confirm("Are you sure you want to delete this doctor?")) {
+      setDoctors((prev) => prev.filter((d) => d.id !== id));
+    }
+  };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-5">
+    <div className="relative">
+      {/* Doctor Table Section */}
+      <TableSection
+        title="Doctors Management"
+        data={filteredDoctors}
+        columns={[
+          {
+            key: "name",
+            label: "Doctor",
+            render: (doc) => (
+              <div className="flex items-center gap-3">
+                <div className="relative h-10 w-10 rounded-full overflow-hidden border">
+                  <Image
+                    src={doc.image}
+                    alt={doc.name}
+                    fill
+                    style={{ objectFit: "cover" }}
+                  />
+                </div>
+                <span className="text-gray-900">{doc.name}</span>
+              </div>
+            ),
+          },
+          { key: "specialty", label: "Specialty" },
+          { key: "email", label: "Email" },
+          { key: "phone", label: "Phone" },
+        ]}
+        actions={(doc) => (
+          <div className="flex justify-end gap-2">
+            <button
+              onClick={() => {
+                setSelectedDoctor(doc);
+                setIsModalOpen(true);
+              }}
+              className="text-teal-500 hover:text-teal-600"
+            >
+              <Edit className="w-4 h-4" />
+            </button>
+            <button
+              onClick={() => handleDelete(doc.id)}
+              className="text-red-500 hover:text-red-600"
+            >
+              <Trash2 className="w-4 h-4" />
+            </button>
+          </div>
+        )}
+        filterState={{
+          filter,
+          setFilter,
+          badgeFilter,
+          setBadgeFilter,
+          search,
+          setSearch,
+          resetFilters,
+        }}
+        badgeOptions={[
+          "General Practitioner",
+          "Dentist",
+          "Dermatologist",
+          "Cardiologist",
+        ]}
+        showDateFilter={false}
+        showStatusFilter={false}
+        onAdd={() => {
+          setSelectedDoctor(null);
+          setIsModalOpen(true);
+        }}
+        addLabel="Add Doctor"
+      />
 
-      {/* Search */}
-      <div className="flex justify-end items-center gap-4 mb-6">
-        <div className="relative w-full sm:w-64">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-          <input
-            type="text"
-            placeholder="Search by name, email, or specialty"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="pl-10 pr-4 py-2 border border-gray-200 rounded-xl w-full focus:ring-2 focus:ring-teal-400 focus:border-teal-400 outline-none"
-          />
-        </div>
-      </div>
-
-      {/* Doctors Table */}
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Doctor</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Specialty</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Phone</th>
-              <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {filteredDoctors.map((doc) => (
-              <tr key={doc.id} className="hover:bg-gray-50">
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="flex items-center">
-                    <div className="relative h-10 w-10 rounded-full overflow-hidden">
-                      <Image src={doc.image} alt={doc.name} fill style={{ objectFit: "cover" }} sizes="40px" />
-                    </div>
-                    <span className="ml-3 text-sm text-gray-900">{doc.name}</span>
-                  </div>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{doc.specialty}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{doc.email}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{doc.phone}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-right text-sm">
-                  <div className="flex justify-end gap-2">
-                    <Link href={`/admin/doctors/edit/${doc.id}`} className="text-teal-500 hover:text-teal-600">
-                      <Edit className="w-4 h-4" />
-                    </Link>
-                    <button className="text-red-500 hover:text-red-600">
-                      <Trash2 className="w-4 h-4" />
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-
-      {/* Add Doctor Button */}
-      <div className="mt-6">
-        <Link
-          href="/admin/doctors/add"
-          className="inline-flex items-center px-4 py-2 bg-teal-500 text-white font-medium rounded-xl hover:bg-teal-600 transition-all"
-        >
-          <Plus className="w-4 h-4 mr-2" />
-          Add Doctor
-        </Link>
-      </div>
+      {/* Add/Edit Modal */}
+      <DoctorModal
+        open={isModalOpen}
+        onClose={() => {
+          setIsModalOpen(false);
+          setSelectedDoctor(null);
+        }}
+        onSave={handleSaveDoctor}
+        initialData={selectedDoctor}
+      />
     </div>
   );
 }
